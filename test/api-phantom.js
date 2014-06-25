@@ -3,7 +3,9 @@ var support = require('./support');
 var request = require('co-request');
 var path = require('path').join;
 var assert = require('assert');
+var exec = require('co-exec');
 var Runner = require('..');
+var fs = require('co-fs');
 
 describe('api - phantomjs', function(){
   it('should fail', function*(){
@@ -57,5 +59,32 @@ describe('api - phantomjs', function(){
     var code = yield runner.phantomjs(['-R', 'json']);
     assert.equal(0, code);
     assert(JSON.parse(buf.trim()).stats);
+  })
+
+  it('should execute commands properly', function*(){
+    var runner = Runner(__dirname + '/../');
+    var a = Math.random();
+    var b = Math.random();
+    var buf = '';
+
+    yield cleanup();
+    runner.command('mkdir test/tmp/a');
+    runner.command('mkdir test/tmp/b');
+    runner.app.path('/test/fixtures/simple-success/test');
+    runner.stdout = support.pass();
+    runner.stderr = support.pass();
+    runner.stdout.on('data', function(c){ buf += c; });
+    runner.stderr.on('data', function(c){ buf += c; });
+    var code = yield runner.phantomjs();
+
+    assert(yield fs.exists(__dirname + '/tmp/a'));
+    assert(yield fs.exists(__dirname + '/tmp/b'));
+    yield cleanup();
+    assert.equal(0, code);
+
+    function *cleanup(){
+      yield exec('rm -rf ' + __dirname + '/tmp/a');
+      yield exec('rm -rf ' + __dirname + '/tmp/b');
+    }
   })
 })
