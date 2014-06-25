@@ -3,5 +3,6 @@
   "chrome",
   "safari",
   "firefox",
-  "opera"
+  "opera",
+  "default"
 ]
