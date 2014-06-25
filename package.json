@@ -14,11 +14,7 @@
     "thunkify": "^2.1.2"
   },
   "bin": {
-    "duo-test": "./bin/duo-test",
-    "duo-test-create": "./bin/duo-test-create",
-    "duo-test-phantom": "./bin/duo-test-phantom",
-    "duo-test-browser": "./bin/duo-test-browser",
-    "duo-test-sauce": "./bin/duo-test-sauce"
+    "duo-test": "./bin/duo-test"
   },
   "devDependencies": {
     "co": "^3.0.6",
