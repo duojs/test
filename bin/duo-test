@@ -43,7 +43,9 @@ program
 program.parse(process.argv);
 
 /**
- * !command
+ * !command test in phantomjs
  */
 
-if (!program.args.length) program.help();
+if (!program.args.length) {
+  cli.phantomjs(program)();
+}
