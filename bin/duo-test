@@ -30,6 +30,7 @@ program
  */
 
 browsers.forEach(function(name){
+  if ('default' == name) name = 'default browser';
   program
   .command(name)
   .description('run tests using ' + name)

@@ -19,7 +19,7 @@
       safari                 run tests using safari
       firefox                run tests using firefox
       opera                  run tests using opera
-      default                run tests using default
+      default                run tests using default browser
       phantomjs              run tests using phantom
 
     Options:
@@ -27,6 +27,8 @@
       -h, --help         output usage information
       -V, --version      output the version number
       -p, --path <path>  tests path defaulted to "/test"
+
+
 
 #### API
 
