@@ -14,7 +14,7 @@ var co = require('co');
 program
   .version(pkg.version)
   .usage('<cmd> [options]')
-  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test');
+  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test')
 
 /**
  * Test <browser>
@@ -35,6 +35,17 @@ program
   .command('phantomjs')
   .description('run tests using phantom')
   .action(cli.phantomjs(program));
+
+/**
+ * Create tests.
+ */
+
+program
+  .command('phantomjs')
+  .description('create test/ directory')
+  .option('-t, --title <title>', 'set index.html title, defaulted to component.json "name"')
+  .option('-b, --build <path>', 'set the build path, defaulted to test/build.js', 'test/build.js')
+  .action(cli.create(program));
 
 /**
  * Parse
