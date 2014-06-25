@@ -43,4 +43,19 @@ describe('api - phantomjs', function(){
     // TODO: exact tests, and make sure mocha-phantomjs doesn't output it's usual junk.
     assert(~buf.indexOf('should succeed'));
   })
+
+  it('should pass args to phantomjs', function*(){
+    var runner = Runner(__dirname + '/../');
+    var buf = '';
+
+    runner.app.path('/test/fixtures/simple-success/test');
+    runner.stdout = support.pass();
+    runner.stderr = support.pass();
+
+    runner.stdout.on('data', function(c){ buf += c; });
+    runner.stderr.on('data', function(c){ buf += c; });
+    var code = yield runner.phantomjs(['-R', 'json']);
+    assert.equal(0, code);
+    assert(JSON.parse(buf.trim()).stats);
+  })
 })

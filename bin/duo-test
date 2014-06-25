@@ -8,6 +8,15 @@ var browsers = require('./browsers');
 var co = require('co');
 
 /**
+ * Args that should be passed to cli tools.
+ */
+
+var args = (function(){
+  var i = process.argv.indexOf('--');
+  return process.argv.slice(++i);
+})();
+
+/**
  * Program
  */
 
@@ -34,7 +43,7 @@ browsers.forEach(function(name){
 program
   .command('phantomjs')
   .description('run tests using phantom')
-  .action(cli.phantomjs(program));
+  .action(cli.phantomjs(program, args));
 
 /**
  * Parse
