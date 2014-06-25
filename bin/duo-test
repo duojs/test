@@ -1,8 +1,10 @@
+#!/usr/bin/env node
 
 var program = require('commander');
 var pkg = require('../package');
 var Runner = require('..');
 var cli = require('../lib/cli');
+var browsers = require('./browsers');
 var co = require('co');
 
 /**
@@ -13,6 +15,17 @@ program
   .version(pkg.version)
   .usage('<cmd> [options]')
   .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test');
+
+/**
+ * Test <browser>
+ */
+
+browsers.forEach(function(name){
+  program
+  .command(name)
+  .description('run tests using ' + name)
+  .action(cli.browser(program, name));
+});
 
 /**
  * Test phantom
