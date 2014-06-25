@@ -3,11 +3,11 @@
 
   Duo's testing utility.
 
-### Getting started
+#### Getting started
 
   > TODO
 
-### CLI
+#### CLI
 
 
     Usage: duo-test <cmd> [options]
