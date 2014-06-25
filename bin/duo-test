@@ -1,0 +1,36 @@
+
+var program = require('commander');
+var pkg = require('../package');
+var Runner = require('..');
+var cli = require('../lib/cli');
+var co = require('co');
+
+/**
+ * Program
+ */
+
+program
+  .version(pkg.version)
+  .usage('<cmd> [options]')
+  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test');
+
+/**
+ * Test phantom
+ */
+
+program
+  .command('phantomjs')
+  .description('run tests using phantom')
+  .action(cli.phantomjs(program));
+
+/**
+ * Parse
+ */
+
+program.parse(process.argv);
+
+/**
+ * !command
+ */
+
+if (!program.args.length) program.help();
