@@ -23,7 +23,8 @@ var args = (function(){
 program
   .version(pkg.version)
   .usage('<cmd> [options]')
-  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test');
+  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test')
+  .option('-c, --commands <list>', 'a list of commands to execute as middleware', list);
 
 /**
  * Test <browser>
@@ -58,4 +59,13 @@ program.parse(process.argv);
 
 if (!program.args.length) {
   cli.phantomjs(program)();
+}
+
+
+/**
+ * List
+ */
+
+function list(val){
+  return val.split(/ *, */);
 }

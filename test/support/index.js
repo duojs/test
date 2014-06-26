@@ -14,7 +14,7 @@ exports.pass = function(){
 exports.command = function(cmd, args){
   var cwd = join(__dirname, '..', '..');
   var bin = join('bin', cmd);
-  var args = args.split(/ +/g);
+  if (!Array.isArray(args)) args = args.split(/ +/g);
   args = ['--harmony-generators', bin].concat(args);
   return function(done){
     var proc = spawn('node', args, { cwd: cwd });
