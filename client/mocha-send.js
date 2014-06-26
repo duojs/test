@@ -53,6 +53,6 @@ function event(name, path){
     }));
 
     var img = new Image;
-    img.url = path + '.jpg?data=' + data;
+    img.src = path + '.jpg?data=' + data;
   };
 };
