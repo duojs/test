@@ -18,10 +18,11 @@ describe('App', function(){
     app.destroy();
   })
 
-  it('should enable localtunnel when `opts.tunnel = true`', function*(){
+  it('should enable localtunnel when `.expose()` is called.', function*(){
     var path = support.fixture('simple-success');
-    var app = App(path, { tunnel: true });
+    var app = App(path);
     yield app.listen();
+    yield app.expose();
     var a = yield request(app.url());
     var b = yield fs.readFile(join(path, 'test', 'index.html'), 'utf8');
     assert(a.body && b);
