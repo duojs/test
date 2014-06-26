@@ -1,6 +1,6 @@
 
 client/build.js: client/mocha-send.js
-	@duo $< $@
+	@duo --global mochasend $< $@
 
 test:
 	@node_modules/.bin/mocha \

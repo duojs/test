@@ -99,6 +99,19 @@ var b64 = require('forbeslindesay/base64-encode@2.0.1');
 module.exports = mochasend;
 
 /**
+ * Client ID.
+ */
+
+var id = (function(){
+  var s = window.location.search;
+  if ('?' == s.charAt(0)) s = s.substr(1);
+  var parts = s.split('=');
+  for (var i = 0; i < parts.length; ++i) {
+    if ('__id__' == parts[i]) return parts[i + 1];
+  }
+})();
+
+/**
  * Initialize mochasend with `Runner`.
  *
  * @param {Runner} runner
@@ -108,17 +121,17 @@ module.exports = mochasend;
 
 function mochasend(runner, path){
   path = path || '/duo-test/mocha-events';
-  runner.on('start', event('start'));
-  runner.on('end', event('end'));
-  runner.on('suite', event('suite'));
-  runner.on('suite end', event('suite end'));
-  runner.on('test', event('test'));
-  runner.on('test end', event('test end'));
-  runner.on('hook', event('hook'));
-  runner.on('hook end', event('hook end'));
-  runner.on('pass', event('pass'));
-  runner.on('fail', event('fail'));
-  runner.on('pending', event('pending'));
+  runner.on('start', event('start', path));
+  runner.on('end', event('end', path));
+  runner.on('suite', event('suite', path));
+  runner.on('suite end', event('suite end', path));
+  runner.on('test', event('test', path));
+  runner.on('test end', event('test end', path));
+  runner.on('hook', event('hook', path));
+  runner.on('hook end', event('hook end', path));
+  runner.on('pass', event('pass', path));
+  runner.on('fail', event('fail', path));
+  runner.on('pending', event('pending', path));
 }
 
 /**
@@ -132,16 +145,32 @@ function mochasend(runner, path){
 
 function event(name, path){
   return function(obj, err){
-    var data = b64(json.stringify({
+    var img = new Image;
+    img.src = path + '.jpg?id=' + id + '&data=' + b64(stringify({
       event: name,
       object: obj,
       error: err
     }));
-
-    var img = new Image;
-    img.url = path + '?data=' + data;
   };
 };
+
+/**
+ * Stringify circular json.
+ *
+ * @param {Object} obj
+ * @return {String}
+ * @api private
+ */
+
+function stringify(obj){
+  var c = [];
+  return json.stringify(obj, function(k, v){
+    if ('object' != typeof v) return v;
+    if (~c.indexOf(v)) return;
+    c.push(v);
+    return v;
+  });
+}
 
 }, {"segmentio/json@1.0.0":2,"forbeslindesay/base64-encode@2.0.1":3}],
 
@@ -719,4 +748,4 @@ module.exports = parse && stringify
   ? JSON
   : require('json-fallback');
 
-}, {"json-fallback":5}]}, {}, {"1":""})
+}, {"json-fallback":5}]}, {}, {"1":"mochasend"})

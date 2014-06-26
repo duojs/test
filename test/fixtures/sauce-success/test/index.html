@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <title>sauce-success</title>
+  <link rel="stylesheet" href="https://rawgithub.com/visionmedia/mocha/1.20.1/mocha.css">
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="/duo-test/mocha-send.js"></script>
+  <script src="https://rawgithub.com/visionmedia/mocha/1.20.1/mocha.js"></script>
+  <script>mocha.setup({ ui: 'bdd' })</script>
+  <script src="tests.js"></script>
+  <script>
+  window.onerror = function(){
+    console.log(arguments);
+  };
+  mochasend(mocha.run());
+  function send(runner, path){
+    console.log('send');
+    function event(name){ return console.log.bind(console, name); };
+    runner.on('start', event('start'));
+    runner.on('end', event('end'));
+    runner.on('suite', event('suite'));
+    runner.on('suite end', event('suite end'));
+    runner.on('test', event('test'));
+    runner.on('test end', event('test end'));
+    runner.on('hook', event('hook'));
+    runner.on('hook end', event('hook end'));
+    runner.on('pass', event('pass'));
+    runner.on('fail', event('fail'));
+    runner.on('pending', event('pending'));
+  }
+  </script>
+</body>
+</html>
