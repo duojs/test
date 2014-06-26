@@ -91,6 +91,31 @@
 
 var json = require('segmentio/json@1.0.0');
 var b64 = require('forbeslindesay/base64-encode@2.0.1');
+var load = require('segmentio/load-script@0.1.2');
+
+/**
+ * Queue
+ */
+
+var q = [];
+
+/**
+ * Push.
+ */
+
+q.add = function(fn){
+  this.push(fn);
+  if (q.running) return;
+  q.running = true;
+  var self = this;
+  next();
+
+  function next(){
+    var n = self.shift();
+    if (!n) return;
+    n(next);
+  }
+};
 
 /**
  * Expose `mochasend`
@@ -125,10 +150,6 @@ function mochasend(runner, path){
   runner.on('end', event('end', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
-  runner.on('test', event('test', path));
-  runner.on('test end', event('test end', path));
-  runner.on('hook', event('hook', path));
-  runner.on('hook end', event('hook end', path));
   runner.on('pass', event('pass', path));
   runner.on('fail', event('fail', path));
   runner.on('pending', event('pending', path));
@@ -145,12 +166,11 @@ function mochasend(runner, path){
 
 function event(name, path){
   return function(obj, err){
-    var img = new Image;
-    img.src = path + '.jpg?id=' + id + '&data=' + b64(stringify({
-      event: name,
-      object: obj,
-      error: err
-    }));
+    q.add(function(next){
+      var data = b64(stringify({ event: name, obj: obj }));
+      var query = '?id=' + id + '&data=' + data;
+      load(path + '.js' + query, next);
+    });
   };
 };
 
@@ -172,9 +192,9 @@ function stringify(obj){
   });
 }
 
-}, {"segmentio/json@1.0.0":2,"forbeslindesay/base64-encode@2.0.1":3}],
+}, {"segmentio/json@1.0.0":2,"forbeslindesay/base64-encode@2.0.1":3,"segmentio/load-script@0.1.2":4}],
 
-4: [function(require, module, exports) {
+5: [function(require, module, exports) {
 
 module.exports = encode;
 
@@ -205,7 +225,7 @@ function encode(string) {
 }
 }, {}],
 
-5: [function(require, module, exports) {
+6: [function(require, module, exports) {
 
 /*
     json2.js
@@ -697,6 +717,43 @@ function encode(string) {
 
 }, {}],
 
+7: [function(require, module, exports) {
+
+
+/**
+ * toString ref.
+ */
+
+var toString = Object.prototype.toString;
+
+/**
+ * Return the type of `val`.
+ *
+ * @param {Mixed} val
+ * @return {String}
+ * @api public
+ */
+
+module.exports = function(val){
+  switch (toString.call(val)) {
+    case '[object Function]': return 'function';
+    case '[object Date]': return 'date';
+    case '[object RegExp]': return 'regexp';
+    case '[object Arguments]': return 'arguments';
+    case '[object Array]': return 'array';
+    case '[object String]': return 'string';
+  }
+
+  if (val === null) return 'null';
+  if (val === undefined) return 'undefined';
+  if (val && val.nodeType === 1) return 'element';
+  if (val === Object(val)) return 'object';
+
+  return typeof val;
+};
+
+}, {}],
+
 3: [function(require, module, exports) {
 
 var utf8Encode = require('utf8-encode');
@@ -735,7 +792,7 @@ function encode(input) {
 
     return output;
 }
-}, {"utf8-encode":4}],
+}, {"utf8-encode":5}],
 
 2: [function(require, module, exports) {
 
@@ -748,4 +805,159 @@ module.exports = parse && stringify
   ? JSON
   : require('json-fallback');
 
-}, {"json-fallback":5}]}, {}, {"1":"mochasend"})
+}, {"json-fallback":6}],
+
+4: [function(require, module, exports) {
+
+
+/**
+ * Module dependencies.
+ */
+
+var onload = require('script-onload');
+var tick = require('next-tick');
+var type = require('type');
+
+/**
+ * Expose `loadScript`.
+ *
+ * @param {Object} options
+ * @param {Function} fn
+ * @api public
+ */
+
+module.exports = function loadScript(options, fn){
+  if (!options) throw new Error('Cant load nothing...');
+
+  // Allow for the simplest case, just passing a `src` string.
+  if ('string' == type(options)) options = { src : options };
+
+  var https = document.location.protocol === 'https:' ||
+              document.location.protocol === 'chrome-extension:';
+
+  // If you use protocol relative URLs, third-party scripts like Google
+  // Analytics break when testing with `file:` so this fixes that.
+  if (options.src && options.src.indexOf('//') === 0) {
+    options.src = https ? 'https:' + options.src : 'http:' + options.src;
+  }
+
+  // Allow them to pass in different URLs depending on the protocol.
+  if (https && options.https) options.src = options.https;
+  else if (!https && options.http) options.src = options.http;
+
+  // Make the `<script>` element and insert it before the first script on the
+  // page, which is guaranteed to exist since this Javascript is running.
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.async = true;
+  script.src = options.src;
+
+  // If we have a fn, attach event handlers, even in IE. Based off of
+  // the Third-Party Javascript script loading example:
+  // https://github.com/thirdpartyjs/thirdpartyjs-code/blob/master/examples/templates/02/loading-files/index.html
+  if ('function' == type(fn)) {
+    onload(script, fn);
+  }
+
+  tick(function(){
+    // Append after event listeners are attached for IE.
+    var firstScript = document.getElementsByTagName('script')[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
+  });
+
+  // Return the script element in case they want to do anything special, like
+  // give it an ID or attributes.
+  return script;
+};
+}, {"script-onload":8,"next-tick":9,"type":7}],
+
+8: [function(require, module, exports) {
+
+
+// https://github.com/thirdpartyjs/thirdpartyjs-code/blob/master/examples/templates/02/loading-files/index.html
+
+/**
+ * Invoke `fn(err)` when the given `el` script loads.
+ *
+ * @param {Element} el
+ * @param {Function} fn
+ * @api public
+ */
+
+module.exports = function(el, fn){
+  return el.addEventListener
+    ? add(el, fn)
+    : attach(el, fn);
+};
+
+/**
+ * Add event listener to `el`, `fn()`.
+ *
+ * @param {Element} el
+ * @param {Function} fn
+ * @api private
+ */
+
+function add(el, fn){
+  el.addEventListener('load', function(_, e){ fn(null, e); }, false);
+  el.addEventListener('error', function(e){
+    var err = new Error('failed to load the script "' + el.src + '"');
+    err.event = e;
+    fn(err);
+  }, false);
+}
+
+/**
+ * Attach evnet.
+ *
+ * @param {Element} el
+ * @param {Function} fn
+ * @api private
+ */
+
+function attach(el, fn){
+  el.attachEvent('onreadystatechange', function(e){
+    if (!/complete|loaded/.test(el.readyState)) return;
+    fn(null, e);
+  });
+}
+
+}, {}],
+
+9: [function(require, module, exports) {
+
+"use strict"
+
+if (typeof setImmediate == 'function') {
+  module.exports = function(f){ setImmediate(f) }
+}
+// legacy node.js
+else if (typeof process != 'undefined' && typeof process.nextTick == 'function') {
+  module.exports = process.nextTick
+}
+// fallback for other environments / postMessage behaves badly on IE8
+else if (typeof window == 'undefined' || window.ActiveXObject || !window.postMessage) {
+  module.exports = function(f){ setTimeout(f) };
+} else {
+  var q = [];
+
+  window.addEventListener('message', function(){
+    var i = 0;
+    while (i < q.length) {
+      try { q[i++](); }
+      catch (e) {
+        q = q.slice(i);
+        window.postMessage('tic!', '*');
+        throw e;
+      }
+    }
+    q.length = 0;
+  }, true);
+
+  module.exports = function(fn){
+    if (!q.length) window.postMessage('tic!', '*');
+    q.push(fn);
+  }
+}
+
+}, {}]}, {}, {"1":"mochasend"})

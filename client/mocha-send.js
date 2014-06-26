@@ -5,6 +5,31 @@
 
 var json = require('segmentio/json@1.0.0');
 var b64 = require('forbeslindesay/base64-encode@2.0.1');
+var load = require('segmentio/load-script@0.1.2');
+
+/**
+ * Queue
+ */
+
+var q = [];
+
+/**
+ * Push.
+ */
+
+q.add = function(fn){
+  this.push(fn);
+  if (q.running) return;
+  q.running = true;
+  var self = this;
+  next();
+
+  function next(){
+    var n = self.shift();
+    if (!n) return;
+    n(next);
+  }
+};
 
 /**
  * Expose `mochasend`
@@ -39,10 +64,6 @@ function mochasend(runner, path){
   runner.on('end', event('end', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
-  runner.on('test', event('test', path));
-  runner.on('test end', event('test end', path));
-  runner.on('hook', event('hook', path));
-  runner.on('hook end', event('hook end', path));
   runner.on('pass', event('pass', path));
   runner.on('fail', event('fail', path));
   runner.on('pending', event('pending', path));
@@ -59,12 +80,11 @@ function mochasend(runner, path){
 
 function event(name, path){
   return function(obj, err){
-    var img = new Image;
-    img.src = path + '.jpg?id=' + id + '&data=' + b64(stringify({
-      event: name,
-      object: obj,
-      error: err
-    }));
+    q.add(function(next){
+      var data = b64(stringify({ event: name, obj: obj }));
+      var query = '?id=' + id + '&data=' + data;
+      load(path + '.js' + query, next);
+    });
   };
 };
 
