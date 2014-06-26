@@ -1,4 +1,7 @@
 
+client/build.js: client/mocha-send.js
+	@duo $< $@
+
 test:
 	@node_modules/.bin/mocha \
 		--harmony-generators \
@@ -6,4 +9,8 @@ test:
 		--timeout 10s \
 		--reporter spec
 
-.PHONY: test
+clean:
+	rm -rf client/build.js
+	rm -rf components
+
+.PHONY: test clean

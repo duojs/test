@@ -90,7 +90,7 @@
  */
 
 var json = require('segmentio/json@1.0.0');
-var xhr = require('yields/xhr@1.0.0');
+var b64 = require('forbeslindesay/base64-encode@2.0.1');
 
 /**
  * Expose `mochasend`
@@ -132,20 +132,51 @@ function mochasend(runner, path){
 
 function event(name, path){
   return function(obj, err){
-    var req = xhr();
-    req.open('POST', path);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send(json.stringify({
-      event: event,
+    var data = b64(json.stringify({
+      event: name,
       object: obj,
       error: err
     }));
+
+    var img = new Image;
+    img.url = path + '?data=' + data;
   };
 };
 
-}, {"segmentio/json@1.0.0":2,"yields/xhr@1.0.0":3}],
+}, {"segmentio/json@1.0.0":2,"forbeslindesay/base64-encode@2.0.1":3}],
 
 4: [function(require, module, exports) {
+
+module.exports = encode;
+
+function encode(string) {
+    string = string.replace(/\r\n/g, "\n");
+    var utftext = "";
+
+    for (var n = 0; n < string.length; n++) {
+
+        var c = string.charCodeAt(n);
+
+        if (c < 128) {
+            utftext += String.fromCharCode(c);
+        }
+        else if ((c > 127) && (c < 2048)) {
+            utftext += String.fromCharCode((c >> 6) | 192);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+        else {
+            utftext += String.fromCharCode((c >> 12) | 224);
+            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+
+    }
+
+    return utftext;
+}
+}, {}],
+
+5: [function(require, module, exports) {
 
 /*
     json2.js
@@ -637,6 +668,46 @@ function event(name, path){
 
 }, {}],
 
+3: [function(require, module, exports) {
+
+var utf8Encode = require('utf8-encode');
+var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+module.exports = encode;
+function encode(input) {
+    var output = "";
+    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = utf8Encode(input);
+
+    while (i < input.length) {
+
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+
+        if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+            enc4 = 64;
+        }
+
+        output = output +
+            keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+            keyStr.charAt(enc3) + keyStr.charAt(enc4);
+
+    }
+
+    return output;
+}
+}, {"utf8-encode":4}],
+
 2: [function(require, module, exports) {
 
 
@@ -648,26 +719,4 @@ module.exports = parse && stringify
   ? JSON
   : require('json-fallback');
 
-}, {"json-fallback":4}],
-
-3: [function(require, module, exports) {
-
-
-/**
- * XMLHttpRequest / ActiveXObject
- *
- * example:
- *
- *        var req = xhr();
- *
- * @return {Object}
- */
-
-module.exports = function(){
-  if (window.XMLHttpRequest) return new XMLHttpRequest();
-  try{ return new ActiveXObject('msxml2.xmlhttp.6.0'); } catch(e){}
-  try{ return new ActiveXObject('msxml2.xmlhttp.3.0'); } catch(e){}
-  try{ return new ActiveXObject('msxml2.xmlhttp'); } catch(e){}
-};
-
-}, {}]}, {}, {"1":"saucelabs"})
+}, {"json-fallback":5}]}, {}, {"1":""})

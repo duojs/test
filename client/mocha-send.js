@@ -4,7 +4,7 @@
  */
 
 var json = require('segmentio/json@1.0.0');
-var xhr = require('yields/xhr@1.0.0');
+var b64 = require('forbeslindesay/base64-encode@2.0.1');
 
 /**
  * Expose `mochasend`
@@ -46,13 +46,13 @@ function mochasend(runner, path){
 
 function event(name, path){
   return function(obj, err){
-    var req = xhr();
-    req.open('POST', path);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send(json.stringify({
-      event: event,
+    var data = b64(json.stringify({
+      event: name,
       object: obj,
       error: err
     }));
+
+    var img = new Image;
+    img.url = path + '.jpg?data=' + data;
   };
 };
