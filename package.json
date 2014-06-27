@@ -2,6 +2,7 @@
   "name": "duo-test",
   "version": "0.0.3",
   "dependencies": {
+    "buffer-events": "0.0.1",
     "co": "^3.0.6",
     "co-exec": "^1.1.0",
     "co-fs": "^1.2.0",

@@ -3,6 +3,7 @@ var co = require('co');
 var Runner = require('../../');
 var runner = Runner(__dirname);
 var Saucelabs = require('../../lib/saucelabs');
+var buffer = require('buffer-events');
 
 // set those
 
@@ -22,12 +23,37 @@ var sauce = Saucelabs(runner.app, SAUCE_USER, SAUCE_KEY);
 // each client corresponds to a browser
 sauce.on('client', function(client){
   var b = client.browser;
-  var spec = new Reporter(client.runner);
+  var flush = buffer(client.runner);
 
-  client.runner.on('start', function(){
-    console.log('%s %s - %s: ', b.name, b.version, b.platform);
-  });
+  report(client, flush);
 });
+
+// since we get clients and reports
+// in parallel we should make sure we
+// output one by one, otherwise the logging
+// will be awful.
+
+function report(client, flush){
+  if (report.busy) {
+    return setTimeout(function(){
+      report(client, flush);
+    });
+  }
+
+  report.busy = true;
+  var runner = client.runner;
+  runner.on('end', function(){
+    report.busy = false;
+  });
+
+  runner.on('start', function(){
+    var b = client.browser;
+    console.log('%s - %s %s', b.name, b.version, b.platform);
+  });
+
+  var reporter = new Reporter(runner);
+  flush();
+}
 
 // add browsers and start the tests.
 co(function*(){
@@ -35,6 +61,7 @@ co(function*(){
   sauce.add('safari');
   sauce.add('firefox');
   yield sauce.start();
+  runner.app.destroy();
 })(done);
 
 function done(err){
