@@ -3,9 +3,9 @@
  * Module dependencies.
  */
 
-var json = require('segmentio/json@1.0.0');
 var b64 = require('forbeslindesay/base64-encode@2.0.1');
-var load = require('segmentio/load-script@0.1.2');
+var jsonp = require('webmodules/jsonp@0.0.4');
+var json = require('segmentio/json@1.0.0');
 
 /**
  * Queue
@@ -83,7 +83,7 @@ function event(name, path){
     q.add(function(next){
       var data = b64(stringify({ event: name, obj: obj }));
       var query = '?id=' + id + '&data=' + data;
-      load(path + '.js' + query, next);
+      jsonp(path + query, next);
     });
   };
 };

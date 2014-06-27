@@ -23,6 +23,7 @@ var sauce = Saucelabs(runner.app, SAUCE_USER, SAUCE_KEY);
 sauce.on('client', function(client){
   var b = client.browser;
   var spec = new Reporter(client.runner);
+
   client.runner.on('start', function(){
     console.log('%s %s - %s: ', b.name, b.version, b.platform);
   });
@@ -31,6 +32,8 @@ sauce.on('client', function(client){
 // add browsers and start the tests.
 co(function*(){
   sauce.add('chrome');
+  sauce.add('safari');
+  sauce.add('firefox');
   yield sauce.start();
 })(done);
 
