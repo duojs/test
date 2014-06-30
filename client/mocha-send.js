@@ -94,7 +94,6 @@ function event(name, path){
           actual: err.actual,
           expected: err.expected,
         };
-        console.log(obj.err);
       }
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var data = b64(stringify({ event: name, obj: obj }));
@@ -116,6 +115,8 @@ function stringify(obj){
   var c = [];
   return json.stringify(obj, function(k, v){
     if ('object' != typeof v) return v;
+    if ('suites' == k) return;
+    if ('tests' == k) return;
     if (~c.indexOf(v)) return;
     c.push(v);
     return v;
