@@ -125,7 +125,6 @@ co(function*(){
   runner.app.path(path);
   browsers.forEach(sauce.add.bind(sauce));
   yield sauce.start();
-  runner.app.destroy();
   process.exit(failures);
 })(error);
 
