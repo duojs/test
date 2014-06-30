@@ -79,7 +79,6 @@ var sauce = Saucelabs(runner.app, program.user, program.key);
  */
 
 var queue = new Queue({
-  timeout: 1000 * 10,
   concurrency: 1
 });
 
