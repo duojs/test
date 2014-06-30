@@ -25,6 +25,12 @@ program
   .parse(process.argv);
 
 /**
+ * Debug mode.
+ */
+
+var debug = !! env.DEBUGMODE;
+
+/**
  * Help
  */
 
@@ -121,11 +127,26 @@ sauce.on('client', function(client){
  * Start
  */
 
+if (!debug) {
+  co(function*(){
+    runner.app.path(path);
+    browsers.forEach(sauce.add.bind(sauce));
+    yield* sauce.start();
+    process.exit(failures);
+  })(error);
+  return;
+}
+
+/**
+ * Start in debug mode.
+ */
+
 co(function*(){
   runner.app.path(path);
-  browsers.forEach(sauce.add.bind(sauce));
-  yield sauce.start();
-  process.exit(failures);
+  var url = yield sauce.start('debug', true);
+  console.log();
+  console.log('  debug on %s', url);
+  console.log();
 })(error);
 
 /**

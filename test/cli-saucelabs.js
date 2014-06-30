@@ -15,6 +15,7 @@ describe('cli - saucelabs', function(){
       '--browser', 'chrome,firefox,safari,ie6..11'
     ]);
 
+    console.log(ret);
     assert(~ret.out.indexOf('safari'), 'expected saucelabs to test on safari');
     assert(~ret.out.indexOf('internet explorer 11'), 'expected saucelabs to test on internet explorer 11');
     assert(~ret.out.indexOf('internet explorer 10'), 'expected saucelabs to test on internet explorer 10');
