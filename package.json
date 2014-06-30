@@ -15,7 +15,9 @@
     "koa-static": "^1.4.5",
     "localtunnel": "^1.3.0",
     "open": "0.0.5",
+    "queue-component": "git://github.com/component/queue.git#1.0.6",
     "thunkify": "^2.1.2",
+    "to-pascal-case": "0.0.2",
     "wd": "^0.3.3",
     "wd-browser": "0.0.1"
   },
