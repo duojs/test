@@ -94,7 +94,7 @@ var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
 
 /**
- * Queue
+ * TODO: component/queue
  */
 
 var q = [];
@@ -139,13 +139,15 @@ var id = (function(){
 /**
  * Initialize mochasend with `Runner`.
  *
+ * TODO: send "ping" event.
+ *
  * @param {Runner} runner
  * @param {String} path
  * @api public
  */
 
 function mochasend(runner, path){
-  path = path || '/duo-test/mocha-events';
+  path = path || '/saucelabs';
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
@@ -180,11 +182,9 @@ function event(name, path){
           actual: err.actual,
           expected: err.expected,
         };
-        console.log(obj.err);
       }
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var data = b64(stringify({ event: name, obj: obj }));
-      console.log(data);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
@@ -1343,4 +1343,4 @@ function jsonp(url, opts, fn){
   target.parentNode.insertBefore(script, target);
 }
 
-}, {"debug":8}]}, {}, {"1":"mochasend"})
+}, {"debug":8}]}, {}, {"1":"saucelabs"})

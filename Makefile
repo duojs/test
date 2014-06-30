@@ -1,6 +1,6 @@
 
-client/build.js: client/mocha-send.js
-	@duo --global mochasend $< $@
+client/build.js: client/saucelabs.js
+	@duo --global saucelabs $< $@
 
 test:
 	@node_modules/.bin/mocha \

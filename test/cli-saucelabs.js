@@ -6,7 +6,7 @@ var env = process.env;
 assert(env.SAUCE_USER && env.SAUCE_KEY, 'expose $SAUCE_USER and $SAUCE_KEY to run the tests');
 
 describe('cli - saucelabs', function(){
-  it('should succeed', function*(){
+  it.only('should succeed', function*(){
     var ret = yield command('duo-test', [
       'saucelabs',
       'test/fixtures/sauce-success/test',

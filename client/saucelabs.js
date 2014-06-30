@@ -8,7 +8,7 @@ var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
 
 /**
- * Queue
+ * TODO: component/queue
  */
 
 var q = [];
@@ -53,13 +53,15 @@ var id = (function(){
 /**
  * Initialize mochasend with `Runner`.
  *
+ * TODO: send "ping" event.
+ *
  * @param {Runner} runner
  * @param {String} path
  * @api public
  */
 
 function mochasend(runner, path){
-  path = path || '/duo-test/mocha-events';
+  path = path || '/saucelabs';
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
