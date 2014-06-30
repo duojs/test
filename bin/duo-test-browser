@@ -15,7 +15,7 @@ var co = require('co');
 
 program
   .usage('[path] [name] [options]')
-  .option('-c, --commands', 'shell commands to run as middleware', [])
+  .option('-c, --commands', 'shell commands to run as middleware', list, [])
   .parse(process.argv);
 
 /**
@@ -73,6 +73,7 @@ process.on('SIGINT', function(){
 co(function*(){
   runner = Runner(process.cwd());
   var cmds = program.commands;
+  cmds.forEach(runner.command.bind(runner));
   runner.app.path(path);
   yield runner.start();
   var url = runner.app.url();
@@ -94,4 +95,13 @@ function error(){
   console.error('  %s', msg);
   console.error();
   process.exit(1);
+}
+
+/**
+ * List
+ */
+
+function list(val){
+  if ('"' == val[0]) val = val.slice(1, -1);
+  return val.split(/ *, */);
 }
