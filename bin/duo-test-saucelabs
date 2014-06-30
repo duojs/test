@@ -17,10 +17,10 @@ var env = process.env;
 
 program
   .usage('<path> [options]')
-  .option('-b, --browsers <list>', 'a browser(s) you want to test on [chrome]', list)
-  .option('-c, --concurrency <n>', 'saucelabs concurrency [3]', 3)
+  .option('-b, --browser <browsers>', 'browser(s) you want to test on [chrome]', list, ['chrome'])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
+  .option('-c, --concurrency <n>', 'saucelabs concurrency [3]', 3)
   .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
   .parse(process.argv);
 
@@ -57,7 +57,7 @@ if (!program.key || !program.user) error('--user and --key are required');
  * Browsers
  */
 
-var browsers = program.browsers || ['chrome'];
+var browsers = program.browser;
 if (!browsers.length) error('--browser missing');
 
 /**
@@ -84,6 +84,12 @@ var queue = new Queue({
 });
 
 /**
+ * Failures
+ */
+
+var failures = 0;
+
+/**
  * Push a client.
  */
 
@@ -97,11 +103,18 @@ sauce.on('client', function(client){
     console.log('  %s %s - %s', b.name, b.version, b.platform);
   }
 
+  function end(done){
+    return function(obj){
+      failures += obj.failures;
+      done();
+    };
+  }
+
   queue.push(function(done){
-    runner.on('end', done);
+    setImmediate(flush);
+    runner.on('end', end(done));
     runner.on('start', start);
     new Reporter(runner);
-    setImmediate(flush);
   });
 });
 
@@ -114,6 +127,7 @@ co(function*(){
   browsers.forEach(sauce.add.bind(sauce));
   yield sauce.start();
   runner.app.destroy();
+  process.exit(failures);
 })(error);
 
 /**

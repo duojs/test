@@ -147,12 +147,14 @@ var id = (function(){
 function mochasend(runner, path){
   path = path || '/duo-test/mocha-events';
   runner.on('start', event('start', path));
-  runner.on('end', event('end', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
   runner.on('pass', event('pass', path));
   runner.on('fail', event('fail', path));
   runner.on('pending', event('pending', path));
+  runner.on('end', function(){
+    event('end', path)({ failures: runner.failures });
+  });
 }
 
 /**
@@ -167,6 +169,20 @@ function mochasend(runner, path){
 function event(name, path){
   return function(obj, err){
     q.add(function(next){
+      if (err) {
+        var msg = err.message || '';
+        var stack = err.stack || '';
+        obj.err = {
+          stack: msg + stack,
+          message: msg,
+          uncaught: err.uncaught,
+          showDiff: err.showDiff,
+          actual: err.actual,
+          expected: err.expected,
+        };
+        console.log(obj.err);
+      }
+      if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var data = b64(stringify({ event: name, obj: obj }));
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);

@@ -39,7 +39,7 @@ var path = program.args[0];
  */
 
 var args = (function(){
-  var i = process.argv.indexOf('phantom:');
+  var i = process.argv.indexOf('args:');
   if (~i) return process.argv.slice(i + 1);
   return [];
 })();

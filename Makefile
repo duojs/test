@@ -6,7 +6,7 @@ test:
 	@node_modules/.bin/mocha \
 		--harmony-generators \
 		--require co-mocha \
-		--timeout 10s \
+		--timeout 100s \
 		--reporter spec
 
 clean:

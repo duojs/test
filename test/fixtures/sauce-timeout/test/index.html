@@ -1,14 +1,14 @@
 <!doctype html>
 <html>
 <head>
-  <title>sauce-success</title>
+  <title>sauce-timeout</title>
   <link rel="stylesheet" href="https://rawgithub.com/visionmedia/mocha/1.20.1/mocha.css">
 </head>
 <body>
   <div id="mocha"></div>
   <script src="/duo-test/mocha-send.js"></script>
   <script src="https://rawgithub.com/visionmedia/mocha/1.20.1/mocha.js"></script>
-  <script>mocha.setup({ ui: 'bdd' })</script>
+  <script>mocha.setup({ ui: 'bdd', timeout: 20 })</script>
   <script src="tests.js"></script>
   <script>mochasend(mocha.run())</script>
 </body>
