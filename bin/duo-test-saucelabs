@@ -20,6 +20,7 @@ program
   .option('-b, --browser <browsers>', 'browser(s) you want to test on [chrome]', list, ['chrome'])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
+  .option('-n, --name <name>', 'tests name in saucelabs [test]', 'test')
   .option('-c, --concurrency <n>', 'saucelabs concurrency [3]', 3)
   .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
   .parse(process.argv);
@@ -131,7 +132,7 @@ if (!debug) {
   co(function*(){
     runner.app.path(path);
     browsers.forEach(sauce.add.bind(sauce));
-    yield* sauce.start();
+    yield* sauce.start(program.name);
     process.exit(failures);
   })(error);
   return;
