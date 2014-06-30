@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+var runner = require('..')(process.cwd());
+var program = require('commander');
+var co = require('co');
+
+/**
+ * Program
+ */
+
+program
+  .usage('<path> [options]')
+  .parse(process.argv);
+
+/**
+ * Help
+ */
+
+program.on('--help', function(){
+  console.log('  Examples');
+  console.log();
+  console.log('    # test using phantom');
+  console.log('    $ duo test phantom /tests');
+  console.log();
+  console.log('    # pass arguments to mocha-phantomjs');
+  console.log('    $ duo test phantom /tests args: --reporter dot');
+  console.log();
+  process.exit(0);
+});
+
+/**
+ * Path
+ */
+
+var path = program.args[0];
+
+/**
+ * Phantomjs args
+ */
+
+var args = (function(){
+  var i = process.argv.indexOf('args:');
+  if (~i) return process.argv.slice(i + 1);
+  return [];
+})();
+
+/**
+ * Run tests
+ */
+
+co(function*(){
+  runner.app.path(path);
+  var code = yield runner.phantomjs(args);
+  runner.app.destroy();
+  process.exit(code);
+})(error);
+
+/**
+ * Error
+ */
+
+function error(err){
+  if (!err) return;
+  console.error();
+  console.error('  %s', err.stack || err);
+  console.error();
+  runner.app.destroy();
+  process.exit(1);
+}

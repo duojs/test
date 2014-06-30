@@ -1,0 +1,154 @@
+#!/usr/bin/env node
+
+var Saucelabs = require('../lib/saucelabs');
+var runner = require('..')(process.cwd());
+var Queue = require('queue-component');
+var pascal = require('to-pascal-case');
+var buffer = require('buffer-events');
+var program = require('commander');
+var fmt = require('util').format;
+var mocha = require('mocha');
+var co = require('co');
+var env = process.env;
+
+/**
+ * Program
+ */
+
+program
+  .usage('<path> [options]')
+  .option('-b, --browser <browsers>', 'browser(s) you want to test on [chrome]', list, ['chrome'])
+  .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
+  .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
+  .option('-c, --concurrency <n>', 'saucelabs concurrency [3]', 3)
+  .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
+  .parse(process.argv);
+
+/**
+ * Help
+ */
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log('    # test in saucelabs');
+  console.log('    $ duo test saucelabs /test --browser chrome --user username --key access-key');
+  console.log();
+  console.log('    # multiple browsers');
+  consoel.log('    $ duo test saucelabs /test --browser "ie6..11, chrome, safari firefox" --user username --key access-key');
+  console.log();
+  process.exit(0);
+});
+
+/**
+ * Path
+ */
+
+var path = program.args[0];
+if (!path) error('path must be given');
+
+/**
+ * User, key
+ */
+
+if (!program.key || !program.user) error('--user and --key are required');
+
+/**
+ * Browsers
+ */
+
+var browsers = program.browser;
+if (!browsers.length) error('--browser missing');
+
+/**
+ * Reporter
+ */
+
+var reporter = pascal(program.reporter);
+var Reporter = mocha.reporters[reporter];
+if (!Reporter) error('--reporter %s was not found in mocha.reporters', reporter);
+
+/**
+ * Run
+ */
+
+var sauce = Saucelabs(runner.app, program.user, program.key);
+
+/**
+ * Queue
+ */
+
+var queue = new Queue({
+  timeout: 1000 * 10,
+  concurrency: 1
+});
+
+/**
+ * Failures
+ */
+
+var failures = 0;
+
+/**
+ * Push a client.
+ */
+
+sauce.on('client', function(client){
+  var runner = client.runner;
+  var flush = buffer(client.runner);
+  var b = client.browser;
+
+  function start(){
+    console.log();
+    console.log('  %s %s - %s', b.name, b.version, b.platform);
+  }
+
+  function end(done){
+    return function(obj){
+      failures += obj.failures;
+      done();
+    };
+  }
+
+  queue.push(function(done){
+    setImmediate(flush);
+    runner.on('end', end(done));
+    runner.on('start', start);
+    new Reporter(runner);
+  });
+});
+
+/**
+ * Start
+ */
+
+co(function*(){
+  runner.app.path(path);
+  browsers.forEach(sauce.add.bind(sauce));
+  yield sauce.start();
+  runner.app.destroy();
+  process.exit(failures);
+})(error);
+
+/**
+ * List
+ */
+
+function list(val){
+  if ('"' == val[0]) val = val.slice(1, -1);
+  return val.split(/ *, */);
+}
+
+/**
+ * Error
+ */
+
+function error(err){
+  if (!err) return;
+  var args = [].slice.call(arguments, 1);
+  var msg = fmt.apply(null, [(err.stack || err)].concat(args));
+  console.error();
+  console.error('   %s', msg);
+  console.error();
+  process.exit(1);
+}

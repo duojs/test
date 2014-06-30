@@ -1,71 +1,70 @@
 #!/usr/bin/env node
 
+var spawn = require('child_process').spawn;
+var exists = require('fs').existsSync;
 var program = require('commander');
 var pkg = require('../package');
-var Runner = require('..');
-var cli = require('../lib/cli');
-var browsers = require('./browsers');
-var co = require('co');
-
-/**
- * Args that should be passed to cli tools.
- */
-
-var args = (function(){
-  var i = process.argv.indexOf('--');
-  return process.argv.slice(++i);
-})();
+var join = require('path').join;
 
 /**
  * Program
  */
 
 program
+  .usage('<command> [path] [options]')
   .version(pkg.version)
-  .usage('<cmd> [options]')
-  .option('-p, --path <path>', 'tests path defaulted to "/test"', '/test')
-  .option('-c, --commands <list>', 'a list of commands to execute as middleware', list);
+  .parse(process.argv);
 
 /**
- * Test <browser>
+ * Help
  */
 
-browsers.forEach(function(name){
-  if ('default' == name) name = 'default browser';
-  program
-  .command(name)
-  .description('run tests using ' + name)
-  .action(cli.browser(program, name));
+program.on('--help', function(){
+  console.log('  Commands:')
+  console.log();
+  console.log('  browser   [name]   run the tests using your browser');
+  console.log('  saucelabs [path]   run the tests using saucelabs');
+  console.log('  phantomjs [path]   run the tests using phantomjs');
+  console.log();
+  process.exit(0);
 });
 
 /**
- * Test phantom
+ * Command
  */
 
-program
-  .command('phantomjs')
-  .description('run tests using phantom')
-  .action(cli.phantomjs(program, args));
+var cmd = program.args[0] || 'phantom';
 
 /**
- * Parse
+ * Path
  */
 
-program.parse(process.argv);
+var path = program.args[1] || '/test';
 
 /**
- * !command test in phantomjs
+ * Bin
  */
 
-if (!program.args.length) {
-  cli.phantomjs(program)();
+var bin = join(__dirname, 'duo-test-' + cmd);
+
+/**
+ * Args
+ */
+
+var args = ['--harmony-generators', bin].concat(process.argv.slice(3));
+
+/**
+ * Run
+ */
+
+if (!exists(bin)) {
+  console.error();
+  console.error('  duo-test-%s was not found', cmd);
+  console.error();
+  process.exit(1);
 }
 
-
-/**
- * List
- */
-
-function list(val){
-  return val.split(/ *, */);
-}
+var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+proc.on('close', function(code){
+  process.exit(code);
+});

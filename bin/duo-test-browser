@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+
+var browsers = require('./browsers');
+var thunkify = require('thunkify');
+var program = require('commander');
+var fmt = require('util').format;
+var Runner = require('..');
+var open = thunkify(require('open'));
+var runner = Runner(process.cwd());
+var co = require('co');
+
+/**
+ * Program
+ */
+
+program
+  .usage('[path] [name] [options]')
+  .option('-c, --commands', 'shell commands to run as middleware', list, [])
+  .parse(process.argv);
+
+/**
+ * Help
+ */
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log('    # test in chrome');
+  console.log('    $ duo test browser /test chrome');
+  console.log();
+  console.log('    # test using your default browser');
+  console.log('     $ duo test browser /test');
+  console.log();
+  process.exit(0);
+});
+
+/**
+ * Args
+ */
+
+var path = program.args[0];
+var name = program.args[1] || 'default';
+
+/**
+ * Browser
+ */
+
+if (!~browsers.indexOf(name)) {
+  error('browser %s was not found', name);
+}
+
+/**
+ * Normalize name
+ */
+
+var browser = name;
+if ('ie' == browser) browser = 'internet explorer';
+if ('chrome' == browser) browser = 'google chrome';
+if ('default' == browser) browser = null;
+
+/**
+ * Quit
+ */
+
+process.on('SIGINT', function(){
+  if (runner) runner.app.destroy();
+});
+
+/**
+ * Test
+ */
+
+co(function*(){
+  runner = Runner(process.cwd());
+  var cmds = program.commands;
+  cmds.forEach(runner.command.bind(runner));
+  runner.app.path(path);
+  yield runner.start();
+  var url = runner.app.url();
+  yield open(url, browser);
+  console.log();
+  console.log('  %s on %s', url, name);
+  console.log();
+})(function(err){
+  if (err) error(err.stack);
+});
+
+/**
+ * Error
+ */
+
+function error(){
+  var msg = fmt.apply(null, arguments);
+  console.error();
+  console.error('  %s', msg);
+  console.error();
+  process.exit(1);
+}
+
+/**
+ * List
+ */
+
+function list(val){
+  if ('"' == val[0]) val = val.slice(1, -1);
+  return val.split(/ *, */);
+}
