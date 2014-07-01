@@ -28,7 +28,7 @@ program.on('--help', function(){
   console.log('    $ duo test browser /test chrome');
   console.log();
   console.log('    # test using your default browser');
-  console.log('     $ duo test browser /test');
+  console.log('    $ duo test browser /test');
   console.log();
   process.exit(0);
 });
