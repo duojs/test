@@ -21,10 +21,10 @@ program.on('--help', function(){
   console.log('  Examples');
   console.log();
   console.log('    # test using phantom');
-  console.log('    $ duo test phantom /tests');
+  console.log('    $ duo test phantomjs /tests');
   console.log();
   console.log('    # pass arguments to mocha-phantomjs');
-  console.log('    $ duo test phantom /tests args: --reporter dot');
+  console.log('    $ duo test phantomjs /tests args: --reporter dot');
   console.log();
   process.exit(0);
 });
