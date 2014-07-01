@@ -15,8 +15,7 @@ var co = require('co');
 
 program
   .usage('[path] [name] [options]')
-  .option('-c, --commands', 'shell commands to run as middleware', list, [])
-  .parse(process.argv);
+  .option('-c, --commands', 'shell commands to run as middleware', list, []);
 
 /**
  * Help
@@ -33,6 +32,12 @@ program.on('--help', function(){
   console.log();
   process.exit(0);
 });
+
+/**
+ * Parse
+ */
+
+program.parse(process.argv);
 
 /**
  * Args

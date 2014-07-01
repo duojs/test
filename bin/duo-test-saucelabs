@@ -23,13 +23,12 @@ var browser = env.BROWSER || 'chrome';
 
 program
   .usage('<path> [options]')
-  .option('-b, --browser <browsers>', 'browser(s) you want to test on [$BROWSER or chrome]', list, [browser])
+  .option('-b, --browser <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
   .option('-n, --name <name>', 'tests name in saucelabs [test]', 'test')
   .option('-c, --concurrency <n>', 'saucelabs concurrency [3]', 3)
-  .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
-  .parse(process.argv);
+  .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot');
 
 /**
  * Debug mode.
@@ -45,13 +44,19 @@ program.on('--help', function(){
   console.log('  Examples:');
   console.log();
   console.log('    # test in saucelabs');
-  console.log('    $ duo test saucelabs /test --browser chrome --user username --key access-key');
+  console.log('    $ duo test saucelabs /test --browser chrome');
   console.log();
   console.log('    # multiple browsers');
-  consoel.log('    $ duo test saucelabs /test --browser "ie6..11, chrome, safari firefox" --user username --key access-key');
+  console.log('    $ duo test saucelabs /test --browser ie6..11,chrome,safari,firefox');
   console.log();
   process.exit(0);
 });
+
+/**
+ * Parse
+ */
+
+program.parse(process.argv);
 
 /**
  * Path

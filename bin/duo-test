@@ -12,8 +12,7 @@ var join = require('path').join;
 
 program
   .usage('<command> [path] [options]')
-  .version(pkg.version)
-  .parse(process.argv);
+  .version(pkg.version);
 
 /**
  * Help
@@ -22,12 +21,18 @@ program
 program.on('--help', function(){
   console.log('  Commands:')
   console.log();
-  console.log('  browser   [name]   run the tests using your browser');
-  console.log('  saucelabs [path]   run the tests using saucelabs');
-  console.log('  phantomjs [path]   run the tests using phantomjs');
+  console.log('    browser   [path] [name]   run the tests using your browser');
+  console.log('    saucelabs [path]          run the tests using saucelabs');
+  console.log('    phantomjs [path]          run the tests using phantomjs');
   console.log();
   process.exit(0);
 });
+
+/**
+ * Parse
+ */
+
+program.parse(process.argv);
 
 /**
  * Command
