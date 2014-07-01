@@ -1,4 +1,11 @@
 
+0.1.1 / 2014-07-01
+==================
+
+ * saucelabs: support $BROWSER
+ * tests: remove ie6-8 for now
+ * tests: mocha-send.js -> saucelabs.js
+
 0.1.0 / 2014-07-01
 ==================
 
