@@ -10,6 +10,7 @@ var co = require('co');
 
 program
   .usage('<path> [options]')
+  .option('-c, --commands', 'shell commands to run as middleware', list, [])
   .parse(process.argv);
 
 /**
@@ -54,6 +55,15 @@ co(function*(){
   runner.app.destroy();
   process.exit(code);
 })(error);
+
+/**
+ * List
+ */
+
+function list(val){
+  if ('"' == val[0]) val = val.slice(1, -1);
+  return val.split(/ *, */);
+}
 
 /**
  * Error
