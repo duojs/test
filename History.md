@@ -1,4 +1,21 @@
 
+0.1.0 / 2014-07-01
+==================
+
+ * phantomjs: add commands support
+ * saucelabs: quit callback
+ * saucelabs: speedup
+ * saucelabs: add --name option
+ * saucelabs: add debug mode
+ * saucelabs: rename mocha-events.js to saucelabs.js, closes #8
+ * saucelabs: dont quit before "end" event is received
+ * fix: browser conf
+ * saucelabs: remove queue timeout, maybe queue-component bug
+ * saucelabs: dont send tests and suites array to keep requests small
+ * saucelabs.js: use jsonp
+ * saucelabs: make sure events are sent in order
+ * add app.expose()
+
 0.0.3 / 2014-06-25
 ==================
 
