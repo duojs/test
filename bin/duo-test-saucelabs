@@ -12,12 +12,18 @@ var co = require('co');
 var env = process.env;
 
 /**
+ * Default browser.
+ */
+
+var browser = env.BROWSER || 'chrome';
+
+/**
  * Program
  */
 
 program
   .usage('<path> [options]')
-  .option('-b, --browser <browsers>', 'browser(s) you want to test on [chrome]', list, ['chrome'])
+  .option('-b, --browser <browsers>', 'browser(s) you want to test on [$BROWSER or chrome]', list, [browser])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
   .option('-n, --name <name>', 'tests name in saucelabs [test]', 'test')
