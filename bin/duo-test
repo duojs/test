@@ -33,7 +33,8 @@ program.on('--help', function(){
  * Command
  */
 
-var cmd = program.args[0] || 'phantomjs';
+var cmd = program.args[0];
+if (!cmd) program.help();
 
 /**
  * Path
