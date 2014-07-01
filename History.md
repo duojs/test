@@ -1,4 +1,12 @@
 
+0.1.2 / 2014-07-01
+==================
+
+ * fix: all --help
+ * duo-test(1): show help if a command is omitted
+ * tests: enable all
+ * duo-test(1): fix some typos
+
 0.1.1 / 2014-07-01
 ==================
 
