@@ -9,26 +9,18 @@
 
 #### CLI
 
-
-    Usage: duo-test <cmd> [options]
-
-    Commands:
-
-      ie                     run tests using ie
-      chrome                 run tests using chrome
-      safari                 run tests using safari
-      firefox                run tests using firefox
-      opera                  run tests using opera
-      default                run tests using default browser
-      phantomjs              run tests using phantom
+    Usage: duo-test <command> [path] [options]
 
     Options:
 
-      -h, --help         output usage information
-      -V, --version      output the version number
-      -p, --path <path>  tests path defaulted to "/test"
+      -h, --help     output usage information
+      -V, --version  output the version number
 
+    Commands:
 
+      browser   [path] [name]   run the tests using your browser
+      saucelabs [path]          run the tests using saucelabs
+      phantomjs [path]          run the tests using phantomjs
 
 #### API
 
