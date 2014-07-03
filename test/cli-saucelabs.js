@@ -12,13 +12,16 @@ describe('cli - saucelabs', function(){
       'test/fixtures/sauce-success/test',
       '--user ', env.SAUCE_USER,
       '--key ', env.SAUCE_KEY,
-      '--browser', 'chrome,firefox,safari,ie9..11'
+      '--browser', 'chrome,firefox,safari,ie6..11'
     ]);
 
     assert(~ret.out.indexOf('safari'), 'expected saucelabs to test on safari');
     assert(~ret.out.indexOf('internet explorer 11'), 'expected saucelabs to test on internet explorer 11');
     assert(~ret.out.indexOf('internet explorer 10'), 'expected saucelabs to test on internet explorer 10');
     assert(~ret.out.indexOf('internet explorer 9'), 'expected saucelabs to test on internet explorer 9');
+    assert(~ret.out.indexOf('internet explorer 8'), 'expected saucelabs to test on internet explorer 8');
+    assert(~ret.out.indexOf('internet explorer 7'), 'expected saucelabs to test on internet explorer 7');
+    assert(~ret.out.indexOf('internet explorer 6'), 'expected saucelabs to test on internet explorer 6');
     assert(~ret.out.indexOf('firefox'), 'expected saucelabs to test on firefox');
     assert(~ret.out.indexOf('chrome'), 'expected saucelabs to test on chrome');
     assert.equal(0, ret.code);
