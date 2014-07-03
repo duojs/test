@@ -1,4 +1,11 @@
 
+0.2.0 / 2014-07-03
+==================
+
+ * fix: ie6-8 and add tests
+ * debugmode: listen on 3000
+ * app: allow .listen(port)
+
 0.1.3 / 2014-07-01
 ==================
 
