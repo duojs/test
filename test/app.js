@@ -18,6 +18,14 @@ describe('App', function(){
     app.destroy();
   })
 
+  it('should start on specified port if given', function*(){
+    var path = support.fixture('simple-success');
+    var app = App(path);
+    yield app.listen(3000);
+    assert.equal(3000, app.address.port);
+    app.destroy();
+  })
+
   it('should enable localtunnel when `.expose()` is called.', function*(){
     var path = support.fixture('simple-success');
     var app = App(path);
