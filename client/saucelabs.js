@@ -4,6 +4,7 @@
  */
 
 var b64 = require('forbeslindesay/base64-encode@2.0.1');
+var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
 
@@ -94,11 +95,12 @@ function event(name, path){
           uncaught: err.uncaught,
           showDiff: err.showDiff,
           actual: err.actual,
-          expected: err.expected,
+          expected: err.expected
         };
       }
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
-      var data = b64(stringify({ event: name, obj: obj }));
+      var json = stringify({ event: name, obj: obj });
+      var data = b64(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
@@ -117,9 +119,9 @@ function stringify(obj){
   var c = [];
   return json.stringify(obj, function(k, v){
     if ('object' != typeof v) return v;
-    if ('suites' == k) return;
-    if ('tests' == k) return;
-    if (~c.indexOf(v)) return;
+    if ('suites' == k) return [];
+    if ('tests' == k) return [];
+    if (~indexof(c, v)) return {};
     c.push(v);
     return v;
   });
