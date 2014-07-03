@@ -90,6 +90,7 @@
  */
 
 var b64 = require('forbeslindesay/base64-encode@2.0.1');
+var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
 
@@ -180,11 +181,12 @@ function event(name, path){
           uncaught: err.uncaught,
           showDiff: err.showDiff,
           actual: err.actual,
-          expected: err.expected,
+          expected: err.expected
         };
       }
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
-      var data = b64(stringify({ event: name, obj: obj }));
+      var json = stringify({ event: name, obj: obj });
+      var data = b64(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
@@ -203,17 +205,17 @@ function stringify(obj){
   var c = [];
   return json.stringify(obj, function(k, v){
     if ('object' != typeof v) return v;
-    if ('suites' == k) return;
-    if ('tests' == k) return;
-    if (~c.indexOf(v)) return;
+    if ('suites' == k) return [];
+    if ('tests' == k) return [];
+    if (~indexof(c, v)) return {};
     c.push(v);
     return v;
   });
 }
 
-}, {"forbeslindesay/base64-encode@2.0.1":2,"webmodules/jsonp@0.0.4":3,"segmentio/json@1.0.0":4}],
+}, {"forbeslindesay/base64-encode@2.0.1":2,"component/indexof@0.0.3":3,"webmodules/jsonp@0.0.4":4,"segmentio/json@1.0.0":5}],
 
-5: [function(require, module, exports) {
+6: [function(require, module, exports) {
 
 module.exports = encode;
 
@@ -244,7 +246,18 @@ function encode(string) {
 }
 }, {}],
 
-6: [function(require, module, exports) {
+3: [function(require, module, exports) {
+
+module.exports = function(arr, obj){
+  if (arr.indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+}, {}],
+
+7: [function(require, module, exports) {
 
 /*
     json2.js
@@ -774,9 +787,9 @@ function encode(input) {
 
     return output;
 }
-}, {"utf8-encode":5}],
+}, {"utf8-encode":6}],
 
-7: [function(require, module, exports) {
+8: [function(require, module, exports) {
 
 /**
  * Helpers.
@@ -892,7 +905,7 @@ function plural(ms, n, name) {
 
 }, {}],
 
-4: [function(require, module, exports) {
+5: [function(require, module, exports) {
 
 
 var json = window.JSON || {};
@@ -903,9 +916,9 @@ module.exports = parse && stringify
   ? JSON
   : require('json-fallback');
 
-}, {"json-fallback":6}],
+}, {"json-fallback":7}],
 
-8: [function(require, module, exports) {
+9: [function(require, module, exports) {
 
 
 /**
@@ -1052,9 +1065,9 @@ function load() {
 
 exports.enable(load());
 
-}, {"./debug":9}],
+}, {"./debug":10}],
 
-9: [function(require, module, exports) {
+10: [function(require, module, exports) {
 
 
 /**
@@ -1254,9 +1267,9 @@ function coerce(val) {
   return val;
 }
 
-}, {"ms":7}],
+}, {"ms":8}],
 
-3: [function(require, module, exports) {
+4: [function(require, module, exports) {
 
 /**
  * Module dependencies
@@ -1343,4 +1356,4 @@ function jsonp(url, opts, fn){
   target.parentNode.insertBefore(script, target);
 }
 
-}, {"debug":8}]}, {}, {"1":"saucelabs"})
+}, {"debug":9}]}, {}, {"1":"saucelabs"})
