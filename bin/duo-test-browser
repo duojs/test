@@ -15,7 +15,7 @@ var co = require('co');
 
 program
   .usage('[path] [name] [options]')
-  .option('-c, --commands', 'shell commands to run as middleware', list, []);
+  .option('-c, --commands <list>', 'shell commands to run as middleware', list, []);
 
 /**
  * Help
