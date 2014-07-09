@@ -7,6 +7,7 @@ var pascal = require('to-pascal-case');
 var buffer = require('buffer-events');
 var program = require('commander');
 var fmt = require('util').format;
+var join = require('path').join;
 var mocha = require('mocha');
 var co = require('co');
 var env = process.env;
@@ -24,6 +25,7 @@ var browser = env.BROWSER || 'chrome';
 program
   .usage('<path> [options]')
   .option('-b, --browser <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
+  .option('-m, --middleware <file>', 'filename that exposes a function that accepts a koa app')
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
   .option('-n, --name <name>', 'tests name in saucelabs [test]', 'test')
@@ -136,12 +138,21 @@ sauce.on('client', function(client){
 });
 
 /**
+ * Middleware
+ */
+
+var mw = program.middleware
+  ? require(join(process.cwd(), program.middleware))
+  : function(){};
+
+/**
  * Start
  */
 
 if (!debug) {
   co(function*(){
     runner.app.path(path);
+    mw(runner.app);
     browsers.forEach(sauce.add.bind(sauce));
     yield* sauce.start(program.name);
     process.exit(failures);
@@ -155,6 +166,7 @@ if (!debug) {
 
 co(function*(){
   runner.app.path(path);
+  mw(runner.app);
   var url = yield sauce.start('debug', true);
   console.log();
   console.log('  debug on %s', url);

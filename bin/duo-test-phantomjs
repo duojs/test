@@ -2,6 +2,7 @@
 
 var runner = require('..')(process.cwd());
 var program = require('commander');
+var join = require('path').join;
 var co = require('co');
 
 /**
@@ -10,7 +11,8 @@ var co = require('co');
 
 program
   .usage('<path> [options]')
-  .option('-c, --commands', 'shell commands to run as middleware', list, []);
+  .option('-c, --commands', 'shell commands to run as middleware', list, [])
+  .option('-m, --middleware <file>', 'filename that exposes a function that accepts a koa app');
 
 /**
  * Help
@@ -51,11 +53,20 @@ var args = (function(){
 })();
 
 /**
+ * Middleware
+ */
+
+var mw = program.middleware
+  ? require(join(process.cwd(), program.middleware))
+  : function(){};
+
+/**
  * Run tests
  */
 
 co(function*(){
   runner.app.path(path);
+  mw(runner.app);
   var code = yield runner.phantomjs(args);
   runner.app.destroy();
   process.exit(code);
