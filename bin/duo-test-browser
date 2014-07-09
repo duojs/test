@@ -7,6 +7,7 @@ var fmt = require('util').format;
 var Runner = require('..');
 var open = thunkify(require('open'));
 var runner = Runner(process.cwd());
+var join = require('path').join;
 var co = require('co');
 
 /**
@@ -15,7 +16,8 @@ var co = require('co');
 
 program
   .usage('[path] [name] [options]')
-  .option('-c, --commands <list>', 'shell commands to run as middleware', list, []);
+  .option('-c, --commands <list>', 'shell commands to run as middleware', list, [])
+  .option('-m, --middleware <file>', 'filename that exposes a function that accepts a koa app');
 
 /**
  * Help
@@ -72,6 +74,14 @@ process.on('SIGINT', function(){
 });
 
 /**
+ * Middleware
+ */
+
+var mw = program.middleware
+  ? require(join(process.cwd(), program.middleware))
+  : function(){};
+
+/**
  * Test
  */
 
@@ -79,6 +89,7 @@ co(function*(){
   runner = Runner(process.cwd());
   var cmds = program.commands;
   cmds.forEach(runner.command.bind(runner));
+  mw(runner.app);
   runner.app.path(path);
   yield runner.start();
   var url = runner.app.url();

@@ -20,4 +20,11 @@ describe('cli - phantomjs', function(){
     var ret = yield command('duo-test', 'phantomjs test/fixtures/simple-success/test args: -R json');
     assert(JSON.parse(ret.out).stats, 'expected -R json to be passed to phantomjs');
   })
+
+  it('should respect middleware', function*(){
+    var tests = 'test/fixtures/simple-mw/test';
+    var mw = tests + '/mw.js';
+    var ret = yield command('duo-test', 'phantomjs ' + tests + ' -m ' + mw);
+    assert.equal(0, ret.code);
+  })
 })
