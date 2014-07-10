@@ -1,4 +1,10 @@
 
+0.2.3 / 2014-07-10
+==================
+
+ * fix: typo preventing a command from running on every load
+ * app.js: Fix 'koa' typo [stephenmathieson]
+
 0.2.2 / 2014-07-09
 ==================
 
