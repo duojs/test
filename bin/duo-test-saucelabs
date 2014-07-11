@@ -23,7 +23,7 @@ var browser = env.BROWSER || 'chrome';
  */
 
 program
-  .usage('<path> [options]')
+  .usage('[path] [options]')
   .option('-b, --browser <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
   .option('-m, --middleware <file>', 'filename that exposes a function that accepts a koa app')
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
@@ -64,8 +64,7 @@ program.parse(process.argv);
  * Path
  */
 
-var path = program.args[0];
-if (!path) error('path must be given');
+var path = program.args[0] || '/test/';
 
 /**
  * User, key
