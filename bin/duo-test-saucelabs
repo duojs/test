@@ -140,9 +140,15 @@ sauce.on('client', function(client){
  * Middleware
  */
 
-var mw = program.middleware
-  ? require(join(process.cwd(), program.middleware))
-  : function(){};
+var mw;
+
+try {
+  mw = program.middleware
+    ? require(join(process.cwd(), program.middleware))
+    : function(){};
+} catch (e) {
+  error('cannot find middleware %s', join(process.cwd(), program.middleware));
+}
 
 /**
  * Start
