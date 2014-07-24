@@ -68,6 +68,7 @@ describe('api - phantomjs', function(){
     var buf = '';
 
     yield cleanup();
+    runner.command('mkdir test/tmp');
     runner.command('mkdir test/tmp/a');
     runner.command('mkdir test/tmp/b');
     runner.app.path('/test/fixtures/simple-success/test');
@@ -83,6 +84,7 @@ describe('api - phantomjs', function(){
     assert.equal(0, code);
 
     function *cleanup(){
+      yield exec('rm -rf ' + __dirname + '/tmp');
       yield exec('rm -rf ' + __dirname + '/tmp/a');
       yield exec('rm -rf ' + __dirname + '/tmp/b');
     }
