@@ -1,0 +1,4 @@
+--require co-mocha
+--timeout 100s
+--reporter spec
+--bail
