@@ -7,24 +7,20 @@
 
   > TODO
 
-#### CLI
+#### Usage
 
-    Usage: duo-test <command> [path] [options]
+  Usage: duo-test <command> [path] [options]
 
-    Options:
+  Options:
 
-      -h, --help     output usage information
-      -V, --version  output the version number
+    -h, --help     output usage information
+    -V, --version  output the version number
 
-    Commands:
+  Commands:
 
-      browser   [path] [name]   run the tests using your browser
-      saucelabs [path]          run the tests using saucelabs
-      phantomjs [path]          run the tests using phantomjs
-
-#### API
-
-  > TODO
+    browser   [path] [name]   run the tests using your browser
+    saucelabs [path]          run the tests using saucelabs
+    phantomjs [path]          run the tests using phantomjs
 
 #### Running Tests
 
