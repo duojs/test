@@ -6,8 +6,9 @@ test:
 	@node_modules/.bin/mocha \
 		--harmony-generators \
 		--require co-mocha \
-		--timeout 100s \
-		--reporter spec
+		--timeout 10s \
+		--reporter spec \
+		--bail
 
 clean:
 	rm -rf client/build.js
