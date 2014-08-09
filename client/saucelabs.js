@@ -109,6 +109,7 @@ function toObject(err){
   for (var k in err) ret[k] = err[k];
   ret.stack = err.stack || '';
   ret.message = err.message || '';
+  ret.stack = [ret.message, ret.stack].join('\n');
   return ret;
 }
 
