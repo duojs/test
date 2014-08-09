@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>phantomjs</title>
+  <script src="https://rawgit.com/visionmedia/mocha/master/mocha.js"></script>
+</head>
+<body>
+  <script>mocha.setup({ ui: 'bdd', timeout: 100 });</script>
+  <script src="tests.js"></script>
+  <script>mochaPhantomJS.run()</script>
+</body>
+</html>
