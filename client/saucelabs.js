@@ -86,18 +86,7 @@ function mochasend(runner, path){
 function event(name, path){
   return function(obj, err){
     q.add(function(next){
-      if (err) {
-        var msg = err.message || '';
-        var stack = err.stack || '';
-        obj.err = {
-          stack: msg + stack,
-          message: msg,
-          uncaught: err.uncaught,
-          showDiff: err.showDiff,
-          actual: err.actual,
-          expected: err.expected
-        };
-      }
+      if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var json = stringify({ event: name, obj: obj });
       var data = b64(json);
@@ -106,6 +95,22 @@ function event(name, path){
     });
   };
 };
+
+/**
+ * Error to object.
+ *
+ * @param {Error} err
+ * @return {Object}
+ * @api private
+ */
+
+function toObject(err){
+  var ret = {};
+  for (var k in err) ret[k] = err[k];
+  ret.stack = err.stack || '';
+  ret.message = err.message || '';
+  return ret;
+}
 
 /**
  * Stringify circular json.
