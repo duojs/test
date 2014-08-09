@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var b64 = require('forbeslindesay/base64-encode@2.0.1');
 var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
@@ -89,7 +88,7 @@ function event(name, path){
       if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var json = stringify({ event: name, obj: obj });
-      var data = b64(json);
+      var data = encodeURIComponent(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
