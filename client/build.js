@@ -88,7 +88,6 @@
  * Module dependencies.
  */
 
-var b64 = require('forbeslindesay/base64-encode@2.0.1');
 var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
@@ -111,9 +110,10 @@ q.add = function(fn){
   next();
 
   function next(){
-    var n = self.shift();
-    if (!n) return;
-    n(next);
+    var fn = self.shift();
+    if (q.ended) return;
+    if (!fn) return setTimeout(next);
+    fn(next);
   }
 };
 
@@ -171,10 +171,11 @@ function saucelabs(runner, path){
 function event(name, path){
   return function(obj, err){
     q.add(function(next){
+      if ('end' == name) q.ended = true;
       if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var json = stringify({ event: name, obj: obj });
-      var data = b64(json);
+      var data = encodeURIComponent(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
@@ -184,6 +185,10 @@ function event(name, path){
 /**
  * Error to object.
  *
+ * Some vms (safari 7 on OSX 10.10)
+ * don't include `.message` in `.stack`
+ * so we add it manually.
+ *
  * @param {Error} err
  * @return {Object}
  * @api private
@@ -192,9 +197,11 @@ function event(name, path){
 function toObject(err){
   var ret = {};
   for (var k in err) ret[k] = err[k];
-  ret.stack = err.stack || '';
-  ret.message = err.message || '';
-  ret.stack = [ret.message, ret.stack].join('\n');
+  var stack = err.stack || '';
+  var msg = err.message || '';
+  if (0 != stack.indexOf(err.name)) stack = [msg, stack].join('\n');
+  ret.message = msg;
+  ret.stack = stack;
   return ret;
 }
 
@@ -218,75 +225,8 @@ function stringify(obj){
   });
 }
 
-}, {"forbeslindesay/base64-encode@2.0.1":2,"component/indexof@0.0.3":3,"webmodules/jsonp@0.0.4":4,"segmentio/json@1.0.0":5}],
+}, {"component/indexof@0.0.3":2,"webmodules/jsonp@0.0.4":3,"segmentio/json@1.0.0":4}],
 2: [function(require, module, exports) {
-var utf8Encode = require('utf8-encode');
-var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-module.exports = encode;
-function encode(input) {
-    var output = "";
-    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-    var i = 0;
-
-    input = utf8Encode(input);
-
-    while (i < input.length) {
-
-        chr1 = input.charCodeAt(i++);
-        chr2 = input.charCodeAt(i++);
-        chr3 = input.charCodeAt(i++);
-
-        enc1 = chr1 >> 2;
-        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-        enc4 = chr3 & 63;
-
-        if (isNaN(chr2)) {
-            enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-            enc4 = 64;
-        }
-
-        output = output +
-            keyStr.charAt(enc1) + keyStr.charAt(enc2) +
-            keyStr.charAt(enc3) + keyStr.charAt(enc4);
-
-    }
-
-    return output;
-}
-}, {"utf8-encode":6}],
-6: [function(require, module, exports) {
-module.exports = encode;
-
-function encode(string) {
-    string = string.replace(/\r\n/g, "\n");
-    var utftext = "";
-
-    for (var n = 0; n < string.length; n++) {
-
-        var c = string.charCodeAt(n);
-
-        if (c < 128) {
-            utftext += String.fromCharCode(c);
-        }
-        else if ((c > 127) && (c < 2048)) {
-            utftext += String.fromCharCode((c >> 6) | 192);
-            utftext += String.fromCharCode((c & 63) | 128);
-        }
-        else {
-            utftext += String.fromCharCode((c >> 12) | 224);
-            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-            utftext += String.fromCharCode((c & 63) | 128);
-        }
-
-    }
-
-    return utftext;
-}
-}, {}],
-3: [function(require, module, exports) {
 module.exports = function(arr, obj){
   if (arr.indexOf) return arr.indexOf(obj);
   for (var i = 0; i < arr.length; ++i) {
@@ -295,7 +235,7 @@ module.exports = function(arr, obj){
   return -1;
 };
 }, {}],
-4: [function(require, module, exports) {
+3: [function(require, module, exports) {
 /**
  * Module dependencies
  */
@@ -381,8 +321,8 @@ function jsonp(url, opts, fn){
   target.parentNode.insertBefore(script, target);
 }
 
-}, {"debug":7}],
-7: [function(require, module, exports) {
+}, {"debug":5}],
+5: [function(require, module, exports) {
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -411,9 +351,9 @@ exports.colors = [
 ];
 
 /**
- * Currently only WebKit-based Web Inspectors and the Firebug
- * extension (*not* the built-in Firefox web inpector) are
- * known to support "%c" CSS customizations.
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
  *
  * TODO: add a `localStorage` variable to explicitly enable/disable colors
  */
@@ -422,7 +362,10 @@ function useColors() {
   // is webkit? http://stackoverflow.com/a/16459606/376773
   return ('WebkitAppearance' in document.documentElement.style) ||
     // is firebug? http://stackoverflow.com/a/398120/376773
-    (window.console && (console.firebug || (console.exception && console.table)));
+    (window.console && (console.firebug || (console.exception && console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
 }
 
 /**
@@ -446,15 +389,15 @@ function formatArgs() {
 
   args[0] = (useColors ? '%c' : '')
     + this.namespace
-    + (useColors ? '%c ' : ' ')
+    + (useColors ? ' %c' : ' ')
     + args[0]
     + (useColors ? '%c ' : ' ')
     + '+' + exports.humanize(this.diff);
 
-  if (!useColors) return args
+  if (!useColors) return args;
 
   var c = 'color: ' + this.color;
-  args = [args[0], c, ''].concat(Array.prototype.slice.call(args, 1));
+  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
 
   // the final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
@@ -528,8 +471,8 @@ function load() {
 
 exports.enable(load());
 
-}, {"./debug":8}],
-8: [function(require, module, exports) {
+}, {"./debug":6}],
+6: [function(require, module, exports) {
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -645,7 +588,7 @@ function debug(namespace) {
     if ('function' === typeof exports.formatArgs) {
       args = exports.formatArgs.apply(self, args);
     }
-    var logFn = exports.log || enabled.log || console.log.bind(console);
+    var logFn = enabled.log || exports.log || console.log.bind(console);
     logFn.apply(self, args);
   }
   enabled.enabled = true;
@@ -673,7 +616,7 @@ function enable(namespaces) {
 
   for (var i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace('*', '.*?');
+    namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
       exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
     } else {
@@ -728,8 +671,8 @@ function coerce(val) {
   return val;
 }
 
-}, {"ms":9}],
-9: [function(require, module, exports) {
+}, {"ms":7}],
+7: [function(require, module, exports) {
 /**
  * Helpers.
  */
@@ -843,7 +786,7 @@ function plural(ms, n, name) {
 }
 
 }, {}],
-5: [function(require, module, exports) {
+4: [function(require, module, exports) {
 
 var json = window.JSON || {};
 var stringify = json.stringify;
@@ -853,8 +796,8 @@ module.exports = parse && stringify
   ? JSON
   : require('json-fallback');
 
-}, {"json-fallback":10}],
-10: [function(require, module, exports) {
+}, {"json-fallback":8}],
+8: [function(require, module, exports) {
 /*
     json2.js
     2014-02-04
