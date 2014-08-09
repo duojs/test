@@ -98,6 +98,10 @@ function event(name, path){
 /**
  * Error to object.
  *
+ * Some vms (safari 7 on OSX 10.10)
+ * don't include `.message` in `.stack`
+ * so we add it manually.
+ *
  * @param {Error} err
  * @return {Object}
  * @api private
@@ -106,9 +110,11 @@ function event(name, path){
 function toObject(err){
   var ret = {};
   for (var k in err) ret[k] = err[k];
-  ret.stack = err.stack || '';
-  ret.message = err.message || '';
-  ret.stack = [ret.message, ret.stack].join('\n');
+  var stack = err.stack || '';
+  var msg = err.message || '';
+  if (0 != stack.indexOf(err.name)) stack = [msg, stack].join('\n');
+  ret.message = msg;
+  ret.stack = stack;
   return ret;
 }
 
