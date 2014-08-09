@@ -33,10 +33,10 @@ q.add = function(fn){
 };
 
 /**
- * Expose `mochasend`
+ * Expose `saucelabs`
  */
 
-module.exports = mochasend;
+module.exports = saucelabs;
 
 /**
  * Client ID.
@@ -52,7 +52,7 @@ var id = (function(){
 })();
 
 /**
- * Initialize mochasend with `Runner`.
+ * Initialize saucelabs with `Runner`.
  *
  * TODO: send "ping" event.
  *
@@ -61,7 +61,7 @@ var id = (function(){
  * @api public
  */
 
-function mochasend(runner, path){
+function saucelabs(runner, path){
   path = path || '/saucelabs';
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
