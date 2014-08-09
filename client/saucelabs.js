@@ -25,9 +25,10 @@ q.add = function(fn){
   next();
 
   function next(){
-    var n = self.shift();
-    if (!n) return;
-    n(next);
+    var fn = self.shift();
+    if (q.ended) return;
+    if (!fn) return setTimeout(next);
+    fn(next);
   }
 };
 
@@ -85,6 +86,7 @@ function saucelabs(runner, path){
 function event(name, path){
   return function(obj, err){
     q.add(function(next){
+      if ('end' == name) q.ended = true;
       if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var json = stringify({ event: name, obj: obj });
