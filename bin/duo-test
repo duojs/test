@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --harmony-generators
 
 var exists = require('fs').existsSync;
 var base = require('path').basename;
