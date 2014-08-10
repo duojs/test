@@ -171,7 +171,7 @@ if (!debug) {
 co(function*(){
   runner.app.path(path);
   mw(runner.app);
-  var url = yield sauce.run('debug', true);
+  var url = yield sauce.debug();
   console.log();
   console.log('  debug on %s', url);
   console.log();
