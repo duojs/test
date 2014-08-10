@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>{{name}}</title>
+    <title>{{title}}</title>
     <link rel="stylesheet" href="/mocha.css">
     <script src="/saucelabs.js"></script>
     <script src="/mocha.js"></script>
@@ -14,7 +14,7 @@
       (function(){
         var m = window.mochaPhantomJS || mocha;
         var s = window.saucelabs || function(){};
-        s(mocha.run());
+        s(m.run());
       })();
     </script>
   </body>

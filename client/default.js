@@ -18,5 +18,5 @@ module.exports = function anonymous(obj
     return '';
   };
 
-  return "<!doctype html>\n<html>\n  <head>\n    <title>" + escape(obj.name) + "</title>\n    <link rel=\"stylesheet\" href=\"/mocha.css\">\n    <script src=\"/saucelabs.js\"></script>\n    <script src=\"/mocha.js\"></script>\n  </head>\n  <body>\n    <div id=\"mocha\"></div>\n    <script>mocha.setup(" + escape(obj.opts) + ")</script>\n    <script src=\"/build.js\"></script>\n    <script>\n      (function(){\n        var m = window.mochaPhantomJS || mocha;\n        var s = window.saucelabs || function(){};\n        s(mocha.run());\n      })();\n    </script>\n  </body>\n</html>\n"
+  return "<!doctype html>\n<html>\n  <head>\n    <title>" + escape(obj.title) + "</title>\n    <link rel=\"stylesheet\" href=\"/mocha.css\">\n    <script src=\"/saucelabs.js\"></script>\n    <script src=\"/mocha.js\"></script>\n  </head>\n  <body>\n    <div id=\"mocha\"></div>\n    <script>mocha.setup(" + escape(obj.opts) + ")</script>\n    <script src=\"/build.js\"></script>\n    <script>\n      (function(){\n        var m = window.mochaPhantomJS || mocha;\n        var s = window.saucelabs || function(){};\n        s(m.run());\n      })();\n    </script>\n  </body>\n</html>\n"
 }
