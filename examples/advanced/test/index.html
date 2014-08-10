@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>advanced</title>
+    <link rel="stylesheet" href="https://rawgit.com/visionmedia/mocha/master/mocha.css">
+    <script src="https://rawgit.com/visionmedia/mocha/master/mocha.js"></script>
+    <script src="/saucelabs.js"></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script>mocha.setup({ ui: 'bdd', timeout: 100 })</script>
+    <script src="/build.js"></script>
+    <script>
+      (function(){
+        var m = window.mochaPhantomJS || mocha;
+        var s = window.saucelabs || function(){};
+        s(m.run());
+      })();
+    </script>
+  </body>
+</html>

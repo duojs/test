@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var b64 = require('forbeslindesay/base64-encode@2.0.1');
 var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
@@ -26,9 +25,10 @@ q.add = function(fn){
   next();
 
   function next(){
-    var n = self.shift();
-    if (!n) return;
-    n(next);
+    var fn = self.shift();
+    if (q.ended) return;
+    if (!fn) return setTimeout(next);
+    fn(next);
   }
 };
 
@@ -63,6 +63,7 @@ var id = (function(){
 
 function saucelabs(runner, path){
   path = path || '/saucelabs';
+  event('ping', path)({});
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));
@@ -86,10 +87,11 @@ function saucelabs(runner, path){
 function event(name, path){
   return function(obj, err){
     q.add(function(next){
+      if ('end' == name) q.ended = true;
       if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
       var json = stringify({ event: name, obj: obj });
-      var data = b64(json);
+      var data = encodeURIComponent(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
     });
@@ -99,6 +101,10 @@ function event(name, path){
 /**
  * Error to object.
  *
+ * Some vms (safari 7 on OSX 10.10)
+ * don't include `.message` in `.stack`
+ * so we add it manually.
+ *
  * @param {Error} err
  * @return {Object}
  * @api private
@@ -107,9 +113,11 @@ function event(name, path){
 function toObject(err){
   var ret = {};
   for (var k in err) ret[k] = err[k];
-  ret.stack = err.stack || '';
-  ret.message = err.message || '';
-  ret.stack = [ret.message, ret.stack].join('\n');
+  var stack = err.stack || '';
+  var msg = err.message || '';
+  if (0 != stack.indexOf(err.name)) stack = [msg, stack].join('\n');
+  ret.message = msg;
+  ret.stack = stack;
   return ret;
 }
 

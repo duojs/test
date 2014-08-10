@@ -1,32 +1,64 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --harmony-generators
 
-var spawn = require('child_process').spawn;
 var exists = require('fs').existsSync;
+var base = require('path').basename;
 var program = require('commander');
+var fmt = require('util').format;
 var pkg = require('../package');
 var join = require('path').join;
+var Runner = require('..');
+var cwd = process.cwd();
+var co = require('co');
+var env = process.env;
+
+/**
+ * Default browser
+ */
+
+var browser = env.BROWSER || 'chrome';
 
 /**
  * Program
  */
 
 program
-  .usage('<command> [path] [options]')
+  .usage('<command> [options]')
+  .option('-p, --pathname <path>', 'tests path, defaults to /test', '/test')
+  .option('-c, --commands <list>', 'shell commands to run on refresh', list, [])
+  .option('-m, --middleware <file>', 'a file that exposes a function that accepts koa app')
+  .option('-t, --title <title>', 'set a title to your tests [' + base(cwd) + ']', base(cwd))
+  .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
   .version(pkg.version);
 
 /**
- * Help
+ * Saucelabs
  */
 
-program.on('--help', function(){
-  console.log('  Commands:')
-  console.log();
-  console.log('    browser   [path] [name]   run the tests using your browser');
-  console.log('    saucelabs [path]          run the tests using saucelabs');
-  console.log('    phantomjs [path]          run the tests using phantomjs');
-  console.log();
-  process.exit(0);
-});
+program
+  .command('saucelabs')
+  .description('run tests using saucelabs')
+  .option('-b, --browsers <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
+  .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
+  .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
+  .action(pass('./saucelabs'));
+
+/**
+ * Browser
+ */
+
+program
+  .command('browser [name]')
+  .description('run tests using a browser')
+  .action(pass('./browser'));
+
+/**
+ * PhantomJS
+ */
+
+program
+  .command('phantomjs')
+  .description('run tests using phantomjs')
+  .action(pass('./phantom.js'));
 
 /**
  * Parse
@@ -35,42 +67,78 @@ program.on('--help', function(){
 program.parse(process.argv);
 
 /**
- * Command
+ * Middleware
  */
 
-var cmd = program.args[0];
-if (!cmd) program.help();
+if (program.middleware) {
+  var path = join(cwd, program.middleware);
+  if (!exists(path)) error('cannot find middleware %s', path);
+  var middleware = require(path);
+}
 
 /**
- * Path
+ * Lazy load `path` and pass `args`.
  */
 
-var path = program.args[1] || '/test';
+function pass(path){
+  return co(function*(){
+    var args = [].slice.call(arguments);
+    var command = args.pop();
+
+    try {
+      var cmd = require(path);
+      yield cmd(command, runner(), args);
+    } catch (e) {
+      error(e.stack);
+    }
+  });
+}
 
 /**
- * Bin
+ * Create a basic runner.
  */
 
-var bin = join(__dirname, 'duo-test-' + cmd);
+function runner(){
+  var cmds = program.commands.filter(string);
+  var mw = middleware || function(){};
+  var runner = Runner(cwd);
+  cmds.forEach(runner.command.bind(runner));
+  mw(runner.app);
+  runner.app.path(program.pathname);
+
+  process.on('SIGINT', function(){
+    runner.destroy();
+    process.exit(0);
+  });
+
+  return runner;
+}
 
 /**
- * Args
+ * is string.
  */
 
-var args = ['--harmony-generators', bin].concat(process.argv.slice(3));
+function string(val){
+  return 'string' == typeof val;
+}
 
 /**
- * Run
+ * Error
  */
 
-if (!exists(bin)) {
+function error(){
+  var msg = fmt.apply(null, arguments);
   console.error();
-  console.error('  duo-test-%s was not found', cmd);
+  console.error('  %s', msg);
   console.error();
   process.exit(1);
 }
 
-var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
-proc.on('close', function(code){
-  process.exit(code);
-});
+/**
+ * List
+ */
+
+function list(val){
+  if ('"' == val[0]) val = val.slice(1, -1);
+  return val.split(/ *, */);
+}
