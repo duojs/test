@@ -23,7 +23,7 @@ var browser = env.BROWSER || 'chrome';
 
 program
   .usage('<command> [options]')
-  .option('-p, --pathname <path>', 'tests path, defaults to /tests', '/tests')
+  .option('-p, --pathname <path>', 'tests path, defaults to /test', '/test')
   .option('-c, --commands <list>', 'shell commands to run on refresh', list, [])
   .option('-m, --middleware <file>', 'a file that exposes a function that accepts koa app')
   .option('-t, --title <title>', 'set a title to your tests [' + base(cwd) + ']', base(cwd))
