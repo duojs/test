@@ -105,7 +105,12 @@ function runner(){
   cmds.forEach(runner.command.bind(runner));
   mw(runner.app);
   runner.app.path(program.pathname);
-  process.on('SIGINT', runner.destroy.bind(runner));
+
+  process.on('SIGINT', function(){
+    runner.destroy();
+    process.exit(0);
+  });
+
   return runner;
 }
 
