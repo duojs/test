@@ -27,6 +27,7 @@
   "devDependencies": {
     "co-mocha": "0.0.4",
     "co-request": "^0.2.0",
+    "minstache": "^1.2.0",
     "mocha-phantomjs": "^3.5.0",
     "phantomjs": "^1.9.7-10"
   }

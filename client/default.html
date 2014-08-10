@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{name}}</title>
+    <link rel="stylesheet" href="/mocha.css">
+    <script src="/saucelabs.js"></script>
+    <script src="/mocha.js"></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script>mocha.setup({{opts}})</script>
+    <script src="/build.js"></script>
+    <script>
+      (function(){
+        var m = window.mochaPhantomJS || mocha;
+        var s = window.saucelabs || function(){};
+        s(mocha.run());
+      })();
+    </script>
+  </body>
+</html>
