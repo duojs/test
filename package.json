@@ -22,10 +22,7 @@
     "wd-browser": "1.0.1"
   },
   "bin": {
-    "duo-test": "./bin/duo-test",
-    "duo-test-phantomjs": "./bin/duo-test-phantomjs",
-    "duo-test-saucelabs": "./bin/duo-test-saucelabs",
-    "duo-test-browser": "./bin/duo-test-browser"
+    "duo-test": "./bin/duo-test"
   },
   "devDependencies": {
     "co-mocha": "0.0.4",
