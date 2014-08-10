@@ -16,7 +16,7 @@ var env = process.env;
  */
 
 module.exports = function*(cmd, runner){
-  var reporter = pascal(cmd.reporter);
+  var reporter = pascal(cmd.parent.reporter);
   var Reporter = mocha.reporters[reporter];
   var q = new Queue({ concurrency: 1 });
   var browsers = cmd.browsers;
