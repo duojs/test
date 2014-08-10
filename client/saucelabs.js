@@ -63,6 +63,7 @@ var id = (function(){
 
 function saucelabs(runner, path){
   path = path || '/saucelabs';
+  event('ping', path)({});
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
   runner.on('suite end', event('suite end', path));

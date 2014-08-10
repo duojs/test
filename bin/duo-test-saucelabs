@@ -111,14 +111,13 @@ var failures = 0;
  * Push a client.
  */
 
-sauce.on('client', function(client){
-  var runner = client.runner;
-  var flush = buffer(client.runner);
-  var b = client.browser;
+sauce.on('browser', function(browser){
+  var runner = browser.runner;
+  var flush = buffer(browser.runner);
 
   function start(){
     console.log();
-    console.log('  %s %s - %s', b.name, b.version, b.platform);
+    console.log('  %s', browser);
   }
 
   function end(done){
