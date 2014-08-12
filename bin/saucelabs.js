@@ -15,7 +15,7 @@ var env = process.env;
  * Command
  */
 
-module.exports = function*(cmd, runner){
+module.exports = function*(cmd, dt){
   var reporter = pascal(cmd.parent.reporter);
   var Reporter = mocha.reporters[reporter];
   var q = new Queue({ concurrency: 1 });
@@ -31,7 +31,7 @@ module.exports = function*(cmd, runner){
   assert(key, '--key must be given');
 
   // sauce
-  var sauce = Saucelabs(runner.app, user, key);
+  var sauce = Saucelabs(dt.app, user, key);
 
   // report
   sauce.on('browser', function(browser){

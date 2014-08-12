@@ -88,7 +88,7 @@ function pass(path){
 
     try {
       var cmd = require(path);
-      yield cmd(command, runner(), args);
+      yield cmd(command, duotest(), args);
     } catch (e) {
       error(e.stack);
     }
@@ -96,23 +96,29 @@ function pass(path){
 }
 
 /**
- * Create a basic runner.
+ * Create basic DuoTest instance.
  */
 
-function runner(){
+function duotest(){
   var cmds = program.commands.filter(string);
   var mw = middleware || function(){};
-  var runner = Runner(cwd);
-  cmds.forEach(runner.command.bind(runner));
-  mw(runner.app);
-  runner.app.path(program.pathname);
+  var dt = DuoTest(cwd);
+
+  // add commands
+  cmds.forEach(dt.command.bind(dt));
+
+  // middleware
+  mw(dt.app);
+
+  // set pathname
+  dt.app.path(program.pathname);
 
   process.on('SIGINT', function(){
-    runner.destroy();
+    dt.destroy();
     process.exit(0);
   });
 
-  return runner;
+  return dt;
 }
 
 /**

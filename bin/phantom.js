@@ -3,9 +3,9 @@
  * Command
  */
 
-module.exports = function*(cmd, runner){
+module.exports = function*(cmd, dt){
   var args = slice(cmd.parent.args);
-  var code = yield runner.phantomjs(args);
+  var code = yield dt.phantomjs(args);
   process.exit(code);
 };
 
