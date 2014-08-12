@@ -27,6 +27,7 @@ program
   .option('-c, --commands <list>', 'shell commands to run on refresh', list, [])
   .option('-m, --middleware <file>', 'a file that exposes a function that accepts koa app')
   .option('-t, --title <title>', 'set a title to your tests [' + base(cwd) + ']', base(cwd))
+  .option('-b, --build <path>', 'set the built file path when using the default.html [/build.js]', '/build.js')
   .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
   .version(pkg.version);
 
