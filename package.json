@@ -21,8 +21,7 @@
     "wd": "^0.3.3",
     "wd-browser": "1.0.1",
     "mocha-phantomjs": "^3.5.0",
-    "phantomjs": "^1.9.7-10",
-    "gnode": "0.0.8"
+    "phantomjs": "^1.9.7-10"
   },
   "bin": {
     "duo-test": "./bin/duo-test"
