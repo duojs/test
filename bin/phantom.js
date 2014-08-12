@@ -3,10 +3,24 @@
  * Command
  */
 
-module.exports = function*(cmd, runner){
+module.exports = function*(cmd, dt){
   var args = slice(cmd.parent.args);
-  var code = yield runner.phantomjs(args);
-  process.exit(code);
+  var Reporter = dt.Reporter;
+  var failures = 0;
+
+  dt.add('phantomjs', { args: args });
+
+  dt.on('browser', function(browser){
+    new Reporter(browser.runner);
+    browser.runner.once('end', function(obj){
+      failures += obj.failures;
+    });
+  });
+
+  yield dt.listen();
+  yield dt.run();
+  yield dt.destroy();
+  process.exit(failures);
 };
 
 /**

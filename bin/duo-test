@@ -1,12 +1,15 @@
 #!/usr/bin/env node --harmony-generators
 
+var reporters = require('mocha').reporters;
+var pascal = require('to-pascal-case');
 var exists = require('fs').existsSync;
 var base = require('path').basename;
 var program = require('commander');
 var fmt = require('util').format;
 var pkg = require('../package');
 var join = require('path').join;
-var Runner = require('..');
+var assert = require('assert');
+var DuoTest = require('..');
 var cwd = process.cwd();
 var co = require('co');
 var env = process.env;
@@ -27,6 +30,7 @@ program
   .option('-c, --commands <list>', 'shell commands to run on refresh', list, [])
   .option('-m, --middleware <file>', 'a file that exposes a function that accepts koa app')
   .option('-t, --title <title>', 'set a title to your tests [' + base(cwd) + ']', base(cwd))
+  .option('-B, --build <path>', 'set the built file path when using the default.html [/build.js]', '/build.js')
   .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
   .version(pkg.version);
 
@@ -40,7 +44,7 @@ program
   .option('-b, --browsers <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
-  .action(pass('./saucelabs'));
+  .action(lazy('./saucelabs'));
 
 /**
  * Browser
@@ -49,7 +53,7 @@ program
 program
   .command('browser [name]')
   .description('run tests using a browser')
-  .action(pass('./browser'));
+  .action(lazy('./browser'));
 
 /**
  * PhantomJS
@@ -58,7 +62,7 @@ program
 program
   .command('phantomjs')
   .description('run tests using phantomjs')
-  .action(pass('./phantom.js'));
+  .action(lazy('./phantom.js'));
 
 /**
  * Parse
@@ -80,14 +84,14 @@ if (program.middleware) {
  * Lazy load `path` and pass `args`.
  */
 
-function pass(path){
+function lazy(path){
   return co(function*(){
     var args = [].slice.call(arguments);
     var command = args.pop();
 
     try {
       var cmd = require(path);
-      yield cmd(command, runner(), args);
+      yield cmd(command, duotest(), args);
     } catch (e) {
       error(e.stack);
     }
@@ -95,23 +99,37 @@ function pass(path){
 }
 
 /**
- * Create a basic runner.
+ * Create basic DuoTest instance.
  */
 
-function runner(){
+function duotest(){
   var cmds = program.commands.filter(string);
   var mw = middleware || function(){};
-  var runner = Runner(cwd);
-  cmds.forEach(runner.command.bind(runner));
-  mw(runner.app);
-  runner.app.path(program.pathname);
+  var dt = DuoTest(cwd);
 
+  // reporter
+  var reporter = pascal(program.reporter);
+  dt.Reporter = reporters[reporter];
+  assert(dt.Reporter, 'reporter "' + reporter + '" was not found');
+
+  // add commands
+  cmds.forEach(dt.command.bind(dt));
+
+  // middleware
+  mw(dt.app);
+
+  // set pathname
+  dt.pathname(program.pathname);
+
+  // SIGINT
   process.on('SIGINT', function(){
-    runner.destroy();
-    process.exit(0);
+    dt.destroy();
+    setImmediate(function(){
+      process.exit(0);
+    });
   });
 
-  return runner;
+  return dt;
 }
 
 /**

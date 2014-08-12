@@ -1,8 +1,8 @@
 
 all: client/build.js client/default.js
 
-client/build.js: client/saucelabs.js
-	@duo --global saucelabs $< $@
+client/build.js: client/duo-test.js
+	@duo --global duotest $< $@
 
 client/default.js: client/default.html
 	@node_modules/.bin/minstache < $< > $@
@@ -11,7 +11,7 @@ test:
 	@node_modules/.bin/mocha \
 		--harmony-generators \
 		--require co-mocha \
-		--timeout 10s \
+		--timeout 2s \
 		--reporter spec \
 		--bail
 

@@ -22,12 +22,12 @@ var browsers = [
  * Command
  */
 
-module.exports = function*(cmd, runner, args){
+module.exports = function*(cmd, dt, args){
   var browser = args[0] || 'chrome';
   var realname = name(browser);
   if (!realname) throw new Error('"' + browser + '" is not supported, supported browsers: ' + browsers);
-  yield runner.start();
-  var url = runner.app.url();
+  yield dt.listen();
+  var url = dt.url();
   yield open(url, realname);
 };
 

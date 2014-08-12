@@ -33,10 +33,10 @@ q.add = function(fn){
 };
 
 /**
- * Expose `saucelabs`
+ * Expose `duotest`
  */
 
-module.exports = saucelabs;
+module.exports = duotest;
 
 /**
  * Client ID.
@@ -52,17 +52,15 @@ var id = (function(){
 })();
 
 /**
- * Initialize saucelabs with `Runner`.
- *
- * TODO: send "ping" event.
+ * Initialize duotest with `Runner`.
  *
  * @param {Runner} runner
  * @param {String} path
  * @api public
  */
 
-function saucelabs(runner, path){
-  path = path || '/saucelabs';
+function duotest(runner, path){
+  path = path || '/duotest';
   event('ping', path)({});
   runner.on('start', event('start', path));
   runner.on('suite', event('suite', path));
@@ -90,7 +88,7 @@ function event(name, path){
       if ('end' == name) q.ended = true;
       if (err) obj.err = toObject(err);
       if (obj.fullTitle) obj._fullTitle = obj.fullTitle();
-      var json = stringify({ event: name, obj: obj });
+      var json = stringify({ event: name, data: obj });
       var data = encodeURIComponent(json);
       var query = '?id=' + id + '&data=' + data;
       jsonp(path + query, next);
