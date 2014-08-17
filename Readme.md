@@ -9,12 +9,11 @@
 
   - Stream results straight from Saucelabs.
   - Runs all tests in parallel.
-  - 3X times faster than mocha-phantomjs.
   - Hook into the koa app using `--middleware`.
-  - Run arbitrary shell commands on each refresh using `--command`.
+  - Run arbitrary shell commands on refresh using `--command`.
   - Easy Saucelabs browser descripions. (`chrome:35..stable`, `iphone:stable` etc..)
   - Supports all mocha reporters for Saucelabs and PhantomJS.
-  - Nice API for advanced usage.
+  - Nice API.
 
 #### Quickstart
 
