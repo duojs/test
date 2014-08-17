@@ -18,7 +18,7 @@
 
 #### Quickstart
 
-  See [simple]() and [advanced]() examples to get started.
+  See [simple](https://github.com/component/duo-test/tree/master/examples/simple) and [advanced](https://github.com/component/duo-test/tree/master/examples/advanced) examples to get started.
 
 #### CLI
 
