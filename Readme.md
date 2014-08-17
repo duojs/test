@@ -3,40 +3,49 @@
 
   Duo's testing utility.
 
-#### Getting started
+  See the [Demo](https://cloudup.com/c5qdleOudgZ).
 
-  > TODO
+#### Features
 
-#### Usage
+  - Stream results straight from Saucelabs.
+  - Runs all tests in parallel.
+  - 3X times faster than mocha-phantomjs.
+  - Hook into the koa app using `--middleware`.
+  - Run arbitrary shell commands on each refresh using `--command`.
+  - Easy Saucelabs browser descripions. (`chrome:35..stable`, `iphone:stable` etc..)
+  - Supports all mocha reporters for Saucelabs and PhantomJS.
+  - Nice API for advanced usage.
 
-  Usage: duo-test <command> [path] [options]
+#### Quickstart
 
-  Options:
+  See [simple]() and [advanced]() examples to get started.
 
-    -h, --help     output usage information
-    -V, --version  output the version number
+#### CLI
 
-  Commands:
+    Usage: duo-test <command> [options]
 
-    browser   [path] [name]   run the tests using your browser
-    saucelabs [path]          run the tests using saucelabs
-    phantomjs [path]          run the tests using phantomjs
+    Commands:
 
-#### Running Tests
+      saucelabs [options]
+         run tests using saucelabs
 
-  Login to your saucelabs account and grab your credentials:
+      browser [name]
+         run tests using a browser
 
-  https://saucelabs.com/account
+      phantomjs
+         run tests using phantomjs
 
-  Add them to your environment:
 
-  https://docs.saucelabs.com/ci-integrations/travis-ci/
+    Options:
 
-  Then run the tests with those variables:
-
-  ```
-  SAUCE_KEY=$SAUCE_ACCESS_KEY SAUCE_USER=$SAUCE_USERNAME make test
-  ```
+      -h, --help               output usage information
+      -p, --pathname <path>    tests path, defaults to /test
+      -c, --commands <list>    shell commands to run on refresh
+      -m, --middleware <file>  a file that exposes a function that accepts koa app
+      -t, --title <title>      set a title to your tests [duo-test]
+      -B, --build <path>       set the built file path when using the default.html [/build.js]
+      -R, --reporter <name>    mocha reporter [dot]
+      -V, --version            output the version number
 
 ### License
 
