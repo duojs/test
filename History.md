@@ -1,4 +1,58 @@
 
+0.3.0 / 2014-08-21
+==================
+
+ * docs: fix wording
+ * docs: links
+ * Merge pull request #25 from component/docs
+ * Rewrite :D
+ * Merge pull request #22 from component/refactor
+ * html: fix typos
+ * add advanced example
+ * runner: use default phantomjs
+ * deps: install phantom pkgs by default
+ * saucelabs: fix typo
+ * koa: yield next fail
+ * duo-test(1): change default path to /test
+ * duo-test(1): exit on SIGINT
+ * add default mocha
+ * add default.html
+ * duo-test(1): add --harmony-generators flag
+ * pkg: remove bins
+ * examples: removeem for now
+ * cli: destroy runner on SIGINT
+ * api: add runner.destroy()
+ * cli: refactor + cleanup
+ * api: make some methods private
+ * saucelabs: add 404 edge-case example
+ * saucelabs: better timeout error message
+ * saucelabs: typo
+ * saucelabs: .tok -> .key
+ * saucelabs: add .url()
+ * saucelabs: remove unused vars
+ * saucelabs: add .register(browser)
+ * saucelabs: add .debug()
+ * saucelabs: start() -> run()
+ * saucelabs: add browser abstraction
+ * tests: bail and lower timeout
+ * saucelabs: rebuild client source
+ * saucelabs: handle race condition
+ * saucelabs: handle messageless stack traces
+ * saucelabs: use encode/decode uri component
+ * add saucelabs example
+ * saucelabs: upgrade wd-browser to 1
+ * saucelabs: concat .msg to .stack
+ * add mocha phantomjs example
+ * client: rebuild
+ * saucelabs: ocd
+ * saucelabs: ocd
+ * docs: add usage
+ * remove co-parallel
+ * middleware: add better errors
+ * Merge pull request #18 from component/fix/test
+ * Add how to test to readme
+ * fix test and punctuation
+
 0.2.4 / 2014-07-11
 ==================
 
