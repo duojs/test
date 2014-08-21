@@ -115,6 +115,9 @@ function duotest(){
   // add commands
   cmds.forEach(dt.command.bind(dt));
 
+  // set build
+  dt.build(program.build);
+
   // middleware
   mw(dt.app);
 
