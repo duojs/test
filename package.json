@@ -18,6 +18,7 @@
     "thunkify": "^2.1.2",
     "to-pascal-case": "0.0.2",
     "wd": "^0.3.3",
+    "mocha": "^1.21.4",
     "wd-browser": "1.0.1"
   },
   "bin": {
@@ -26,7 +27,6 @@
   "devDependencies": {
     "co-mocha": "0.0.4",
     "co-request": "^0.2.0",
-    "minstache": "^1.2.0",
-    "mocha": "^1.21.4"
+    "minstache": "^1.2.0"
   }
 }
