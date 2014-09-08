@@ -1,4 +1,14 @@
 
+0.3.3 / 2014-09-08
+==================
+
+ * send noop duotest() when in local browser mode
+ * client: Remove mocha.{js,css} [stephenmathieson]
+ * lib: Use mocha.{js,css} from npm [stephenmathieson]
+ * examples: Add a non-trivial "library" example [stephenmathieson]
+ * spawn command with gnode like with duo [queckezz]
+ * use correct mime-type shortcut [staygrimm]
+
 0.3.2 / 2014-08-21
 ==================
 
