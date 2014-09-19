@@ -9,7 +9,7 @@
     "co-timeout": "0.0.1",
     "commander": "^2.2.0",
     "debug": "^1.0.2",
-    "gnode": "0.0.8",
+    "gnode": "^0.1.0",
     "koa": "^0.8.1",
     "koa-route": "^1.1.4",
     "koa-static": "^1.4.6",
