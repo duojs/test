@@ -1,4 +1,9 @@
 
+0.3.5 / 2014-09-30
+==================
+
+ * accept common saucelabs env variable names [staygrimm]
+
 0.3.4 / 2014-09-19
 ==================
 
