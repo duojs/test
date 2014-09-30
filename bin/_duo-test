@@ -42,8 +42,8 @@ program
   .command('saucelabs')
   .description('run tests using saucelabs')
   .option('-b, --browsers <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
-  .option('-u, --user <user>', 'saucelabs user [$SAUCE_USER]', env.SAUCE_USER)
-  .option('-k, --key <key>', 'saucelabs key [$SAUCE_KEY]', env.SAUCE_KEY)
+  .option('-u, --user <user>', 'saucelabs user [$SAUCE_USERNAME]', env.SAUCE_USER || env.SAUCE_USERNAME)
+  .option('-k, --key <key>', 'saucelabs key [$SAUCE_ACCESS_KEY]', env.SAUCE_KEY || env.SAUCE_ACCESS_KEY)
   .action(lazy('./saucelabs'));
 
 /**
