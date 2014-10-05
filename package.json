@@ -6,7 +6,7 @@
     "co": "^3.1.0",
     "co-exec": "^1.1.0",
     "co-fs": "^1.2.0",
-    "co-timeout": "0.0.1",
+    "co-timeout": "^0.1.0",
     "commander": "^2.2.0",
     "debug": "^1.0.2",
     "gnode": "^0.1.0",
