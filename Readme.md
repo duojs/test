@@ -41,9 +41,10 @@
       -p, --pathname <path>    tests path, defaults to /test
       -c, --commands <list>    shell commands to run on refresh
       -m, --middleware <file>  a file that exposes a function that accepts koa app
-      -t, --title <title>      set a title to your tests [duo-test]
+      -t, --title <title>      set a title to your tests [test]
       -B, --build <path>       set the built file path when using the default.html [/build.js]
       -R, --reporter <name>    mocha reporter [dot]
+      -P, --port <port>        port, defaults to `0`
       -V, --version            output the version number
 
 ### License
