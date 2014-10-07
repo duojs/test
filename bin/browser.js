@@ -26,7 +26,7 @@ module.exports = function*(cmd, dt, args){
   var browser = args[0] || 'chrome';
   var realname = name(browser);
   if (!realname) throw new Error('"' + browser + '" is not supported, supported browsers: ' + browsers);
-  yield dt.listen();
+  yield dt.listen(cmd.parent.port);
   var url = dt.url();
   yield open(url, realname);
 };

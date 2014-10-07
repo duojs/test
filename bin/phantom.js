@@ -17,7 +17,7 @@ module.exports = function*(cmd, dt){
     });
   });
 
-  yield dt.listen();
+  yield dt.listen(cmd.parent.port);
   yield dt.run();
   yield dt.destroy();
   process.exit(failures);

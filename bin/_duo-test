@@ -32,6 +32,7 @@ var program = new Command('duo-test')
   .option('-t, --title <title>', 'set a title to your tests [' + base(cwd) + ']', base(cwd))
   .option('-B, --build <path>', 'set the built file path when using the default.html [/build.js]', '/build.js')
   .option('-R, --reporter <name>', 'mocha reporter [dot]', 'dot')
+  .option('-P, --port <port>', 'port, defaults to `0`', 0)
   .version(pkg.version);
 
 /**

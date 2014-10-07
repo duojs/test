@@ -59,7 +59,7 @@ module.exports = function*(cmd, dt){
   });
 
   // run
-  yield dt.listen();
+  yield dt.listen(cmd.parent.port);
   yield dt.expose();
   yield dt.run();
   yield dt.destroy();
