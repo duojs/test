@@ -133,6 +133,7 @@ function stringify(obj){
     if ('object' != typeof v) return v;
     if ('suites' == k) return [];
     if ('tests' == k) return [];
+    if ('parent' == k) return {};
     if (~indexof(c, v)) return {};
     c.push(v);
     return v;
