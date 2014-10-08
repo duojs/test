@@ -2,7 +2,7 @@
 all: client/build.js client/default.js
 
 client/build.js: client/duo-test.js
-	@duo --global duotest $< $@
+	@duo --global duotest $< > $@
 
 client/default.js: client/default.html
 	@node_modules/.bin/minstache < $< > $@
