@@ -1,4 +1,12 @@
 
+0.3.10 / 2014-10-09
+==================
+
+ * examples: add fatal error example
+ * phantomjs: handle fatal errors
+ * client: add .onerror handler
+ * better debugs()
+
 0.3.9 / 2014-10-08
 ==================
 
