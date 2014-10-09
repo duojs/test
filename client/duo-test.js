@@ -8,6 +8,20 @@ var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
 
 /**
+ * on error handler.
+ */
+
+var onerror = window.onerror;
+window.onerror = function(){
+  if (onerror) onerror.apply(this, arguments);
+  event('fatal', '/duotest')({
+    message: arguments[0],
+    url: arguments[1],
+    lineno: arguments[2]
+  });
+};
+
+/**
  * TODO: component/queue
  */
 
