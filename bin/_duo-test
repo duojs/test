@@ -76,7 +76,7 @@ program.parse(process.argv);
  */
 
 function middleware(){
-  if (!program.middleware) return function(){};
+  if (!program.middleware) return noop;
   var path = join(cwd, program.middleware);
   if (!exists(path)) error('cannot find middleware %s', path);
   return require(path);
@@ -165,3 +165,9 @@ function list(val){
   if ('"' == val[0]) val = val.slice(1, -1);
   return val.split(/ *, */);
 }
+
+/**
+ * Noop.
+ */
+
+function noop(){}
