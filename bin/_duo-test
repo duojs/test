@@ -72,13 +72,14 @@ program
 program.parse(process.argv);
 
 /**
- * Middleware
+ * Load middleware.
  */
 
-if (program.middleware) {
+function middleware(){
+  if (!program.middleware) return function(){};
   var path = join(cwd, program.middleware);
   if (!exists(path)) error('cannot find middleware %s', path);
-  var middleware = require(path);
+  return require(path);
 }
 
 /**
@@ -105,7 +106,7 @@ function lazy(path){
 
 function duotest(){
   var cmds = program.commands.filter(string);
-  var mw = middleware || function(){};
+  var mw = middleware();
   var dt = DuoTest(cwd);
 
   // reporter
