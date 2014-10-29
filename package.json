@@ -1,6 +1,6 @@
 {
   "name": "duo-test",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "dependencies": {
     "buffer-events": "0.0.2",
     "co": "^3.1.0",
