@@ -37,9 +37,9 @@ module.exports = function*(cmd, dt, args){
 
 function name(name){
   switch (name) {
-    case ~browsers.indexOf(name): return name;
     case 'chrome': return 'google chrome';
     case 'ie': return 'internet explorer';
     case 'ff': return 'firefox';
   }
+  if (~browsers.indexOf(name)) return name;
 }
