@@ -2,7 +2,7 @@
 
 var reporters = require('mocha').reporters;
 var Command = require('commander').Command;
-var pascal = require('to-pascal-case');
+var insensitive = require('incasesensitive');
 var exists = require('fs').existsSync;
 var base = require('path').basename;
 var fmt = require('util').format;
@@ -110,8 +110,8 @@ function duotest(){
   var dt = DuoTest(cwd);
 
   // reporter
-  var reporter = pascal(program.reporter);
-  dt.Reporter = reporters[reporter];
+  var reporter = program.reporter;
+  dt.Reporter = insensitive(reporters, reporter);
   assert(dt.Reporter, 'reporter "' + reporter + '" was not found');
 
   // add commands
