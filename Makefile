@@ -11,7 +11,7 @@ test:
 	@node_modules/.bin/mocha \
 		--harmony-generators \
 		--require co-mocha \
-		--timeout 2s \
+		--timeout 10s \
 		--reporter spec \
 		--bail
 
