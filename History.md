@@ -1,4 +1,13 @@
 
+0.3.13 / 2014-12-29
+==================
+
+  * make: increase tests timeout
+  * update wd-browser, closes #62
+  * add travis.yml
+  * examples/simple: Use "tap" reporter
+  * bin: Fix reporter name casing
+
 0.3.12 / 2014-11-07
 ==================
 
