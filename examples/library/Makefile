@@ -4,7 +4,7 @@ TESTS = $(filter-out test/tests.js, $(wildcard test/*.js))
 SRC = $(wildcard index.js lib/*.js)
 
 build.js: test/tests.js
-	duo --root . --type js < $< > $@
+	duo --root . --type js --stdout < $< > $@
 
 test/tests.js: $(SRC) $(TESTS)
 	@echo '// GENERATED FILE: DO NOT EDIT!' > $@

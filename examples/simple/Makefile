@@ -8,7 +8,7 @@
 T= ../../bin/duo-test -c make -R tap -P 3000
 
 build.js: test/test.js
-	@duo $< > build.js
+	@duo --stdout $< > build.js
 
 test-browser:
 	@$(T) browser
