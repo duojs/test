@@ -105,7 +105,7 @@ function event(name, path){
       var json = stringify({ event: name, data: obj });
       var data = encodeURIComponent(json);
       var query = '?id=' + id + '&data=' + data;
-      jsonp(path + query, next);
+      jsonp(path + query, { prefix: '__dtjp' }, next);
     });
   };
 };
