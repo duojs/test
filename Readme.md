@@ -15,6 +15,14 @@
   - Supports all mocha reporters for Saucelabs and PhantomJS.
   - Nice API.
 
+#### Installation
+
+Install duo-test from `npm` with:
+
+```sh
+npm install -g duo-test
+```
+
 #### Quickstart
 
   See [simple](https://github.com/component/duo-test/tree/master/examples/simple) and [advanced](https://github.com/component/duo-test/tree/master/examples/advanced) examples to get started.
@@ -46,6 +54,8 @@
       -R, --reporter <name>    mocha reporter [dot]
       -P, --port <port>        port, defaults to `0`
       -V, --version            output the version number
+
+Note that to use the PhantomJS runner, the `phantomjs` binary must be available in your `$PATH`. You install PhantomJS by running `npm install -g phantomjs` or download it from the [PhantomJS website](http://phantomjs.org).
 
 ### License
 
