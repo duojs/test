@@ -55,6 +55,8 @@ npm install -g duo-test
       -P, --port <port>        port, defaults to `0`
       -V, --version            output the version number
 
+Note that to use the PhantomJS runner, the `phantomjs` binary must be available in your `$PATH`. You install PhantomJS by running `npm install -g phantomjs` or download it from the [PhantomJS website](http://phantomjs.org).
+
 ### License
 
   (MIT)
