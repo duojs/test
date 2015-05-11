@@ -3,6 +3,7 @@ var request = require('co-request');
 var parse = require('url').parse;
 var assert = require('assert');
 var DuoTest = require('..');
+var getOpenPort = require('./get-open-port');
 var env = process.env;
 
 describe('API', function(){
@@ -78,8 +79,9 @@ describe('API', function(){
 
   describe('.listen(port)', function(){
     it('should start listening on the given port', function*(){
+      var port = yield getOpenPort();
       dt.pathname('fixtures/advanced');
-      yield dt.listen(3000);
+      yield dt.listen(port);
       var res = yield request(dt.url());
       assert.equal(200, res.statusCode);
       assert.equal('advanced', res.body.match(/<title>([^<]+)<\/title>/)[1]);
@@ -87,9 +89,10 @@ describe('API', function(){
     });
 
     it('should serve /duotest.js', function*(){
+      var port = yield getOpenPort();
       dt.pathname('fixtures/advanced');
-      yield dt.listen(3000);
-      var res = yield request('http://localhost:3000/duotest.js');
+      yield dt.listen(port);
+      var res = yield request('http://localhost:' + port + '/duotest.js');
       assert.equal(200, res.statusCode);
       yield dt.destroy();
     });
@@ -97,9 +100,10 @@ describe('API', function(){
 
   describe('.expose()', function(){
     it('should expose the server on localtunnel', function*(){
+      var port = yield getOpenPort();
       this.timeout(4e3);
       dt.pathname('fixtures/advanced');
-      yield dt.listen(3000);
+      yield dt.listen(port);
       yield dt.expose();
       var parsed = parse(dt.url());
       assert.equal('localtunnel', parsed.host.split('.')[1]);
