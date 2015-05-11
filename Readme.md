@@ -15,6 +15,14 @@
   - Supports all mocha reporters for Saucelabs and PhantomJS.
   - Nice API.
 
+#### Installation
+
+Install duo-test from `npm` with:
+
+```sh
+npm install -g duo-test
+```
+
 #### Quickstart
 
   See [simple](https://github.com/component/duo-test/tree/master/examples/simple) and [advanced](https://github.com/component/duo-test/tree/master/examples/advanced) examples to get started.
