@@ -1,9 +1,8 @@
-
 ## duo-test
 
-  Duo's testing utility.
+Duo's testing utility.
 
-  See the [Demo](https://cloudup.com/c5qdleOudgZ).
+See the [Demo](https://cloudup.com/c5qdleOudgZ).
 
 #### Features
 
@@ -17,7 +16,7 @@
 
 #### Quickstart
 
-  See [simple](https://github.com/component/duo-test/tree/master/examples/simple) and [advanced](https://github.com/component/duo-test/tree/master/examples/advanced) examples to get started.
+See [simple](https://github.com/component/duo-test/tree/master/examples/simple) and [advanced](https://github.com/component/duo-test/tree/master/examples/advanced) examples to get started.
 
 #### CLI
 
