@@ -56,7 +56,9 @@ Options:
   -V, --version            output the version number
 ```
 
-Note that to use the PhantomJS runner, the `phantomjs` binary must be available in your `$PATH`. You install PhantomJS by running `npm install -g phantomjs` or download it from the [PhantomJS website](http://phantomjs.org).
+#### PhantomJS
+
+`duo-test` will first try to use your project's local PhantomJS dependency, and then fall back on a global PhantomJS installation. Make sure PhantomJS is installed either as a devDependency (`npm install --save-dev phantomjs`) or globally (`npm -g install phantomjs`, or follow the instructions on <http://phantomjs.org/>).
 
 ### License
 
