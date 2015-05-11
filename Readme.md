@@ -21,31 +21,33 @@
 
 #### CLI
 
-    Usage: duo-test <command> [options]
+```sh
+Usage: duo-test <command> [options]
 
-    Commands:
+Commands:
 
-      saucelabs [options]
-         run tests using saucelabs
+  saucelabs [options]
+      run tests using saucelabs
 
-      browser [name]
-         run tests using a browser
+  browser [name]
+      run tests using a browser
 
-      phantomjs
-         run tests using phantomjs
+  phantomjs
+      run tests using phantomjs
 
 
-    Options:
+Options:
 
-      -h, --help               output usage information
-      -p, --pathname <path>    tests path, defaults to /test
-      -c, --commands <list>    shell commands to run on refresh
-      -m, --middleware <file>  a file that exposes a function that accepts koa app
-      -t, --title <title>      set a title to your tests [test]
-      -B, --build <path>       set the built file path when using the default.html [/build.js]
-      -R, --reporter <name>    mocha reporter [dot]
-      -P, --port <port>        port, defaults to `0`
-      -V, --version            output the version number
+  -h, --help               output usage information
+  -p, --pathname <path>    tests path, defaults to /test
+  -c, --commands <list>    shell commands to run on refresh
+  -m, --middleware <file>  a file that exposes a function that accepts koa app
+  -t, --title <title>      set a title to your tests [test]
+  -B, --build <path>       set the built file path when using the default.html [/build.js]
+  -R, --reporter <name>    mocha reporter [dot]
+  -P, --port <port>        port, defaults to `0`
+  -V, --version            output the version number
+```
 
 ### License
 
