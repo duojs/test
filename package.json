@@ -23,6 +23,7 @@
     "to-pascal-case": "0.0.2",
     "wd": "^0.3.3",
     "wd-browser": "1.1.0",
+    "which": "^1.1.1",
     "win-fork": "^1.1.1"
   },
   "bin": {
