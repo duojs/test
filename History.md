@@ -1,4 +1,10 @@
 
+0.4.0 / 2015-05-11
+==================
+
+  * Add ability to use local PhantomJS installation
+  * Minor testing and documentation fixes
+
 0.3.13 / 2014-12-29
 ==================
 
