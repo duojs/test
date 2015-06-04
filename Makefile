@@ -23,4 +23,4 @@ clean:
 	rm -f client/default.js
 	rm -rf components
 
-.PHONY: test clean
+.PHONY: all test clean
