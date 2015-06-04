@@ -1,14 +1,17 @@
+DUO = node_modules/.bin/duo
+MOCHA = node_modules/.bin/mocha
+MINSTACHE = node_modules/.bin/minstache
 
 all: client/build.js client/default.js
 
 client/build.js: client/duo-test.js
-	@duo --global duotest $< > $@
+	@$(DUO) --global duotest $< > $@
 
 client/default.js: client/default.html
-	@node_modules/.bin/minstache < $< > $@
+	@$(MINSTACHE) < $< > $@
 
 test:
-	@node_modules/.bin/mocha \
+	@$(MOCHA) \
 		--harmony-generators \
 		--require co-mocha \
 		--timeout 10s \
