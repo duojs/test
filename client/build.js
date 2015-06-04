@@ -30,15 +30,18 @@
    */
 
   function call(id, require){
-    var m = cache[id] = { exports: {} };
+    var m = { exports: {} };
     var mod = modules[id];
     var name = mod[2];
     var fn = mod[0];
 
     fn.call(m.exports, function(req){
       var dep = modules[id][1][req];
-      return require(dep ? dep : req);
+      return require(dep || req);
     }, m, m.exports, outer, modules, cache, entries);
+
+    // store to cache after successful resolve
+    cache[id] = m;
 
     // expose as `name`.
     if (name) cache[name] = cache[id];
@@ -91,20 +94,6 @@
 var indexof = require('component/indexof@0.0.3');
 var jsonp = require('webmodules/jsonp@0.0.4');
 var json = require('segmentio/json@1.0.0');
-
-/**
- * on error handler.
- */
-
-var onerror = window.onerror;
-window.onerror = function(){
-  if (onerror) onerror.apply(this, arguments);
-  event('fatal', '/duotest')({
-    message: arguments[0],
-    url: arguments[1],
-    lineno: arguments[2]
-  });
-};
 
 /**
  * TODO: component/queue
@@ -350,6 +339,10 @@ exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
 
 /**
  * Colors.
@@ -440,10 +433,10 @@ function formatArgs() {
  */
 
 function log() {
-  // This hackery is required for IE8,
-  // where the `console.log` function doesn't have 'apply'
-  return 'object' == typeof console
-    && 'function' == typeof console.log
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
     && Function.prototype.apply.call(console.log, console, arguments);
 }
 
@@ -457,9 +450,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      localStorage.removeItem('debug');
+      exports.storage.removeItem('debug');
     } else {
-      localStorage.debug = namespaces;
+      exports.storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -474,7 +467,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = localStorage.debug;
+    r = exports.storage.debug;
   } catch(e) {}
   return r;
 }
@@ -484,6 +477,23 @@ function load() {
  */
 
 exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage(){
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
 
 }, {"./debug":6}],
 6: [function(require, module, exports) {
@@ -727,13 +737,17 @@ module.exports = function(val, options){
  */
 
 function parse(str) {
-  var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
+  str = '' + str;
+  if (str.length > 10000) return;
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
   if (!match) return;
   var n = parseFloat(match[1]);
   var type = (match[2] || 'ms').toLowerCase();
   switch (type) {
     case 'years':
     case 'year':
+    case 'yrs':
+    case 'yr':
     case 'y':
       return n * y;
     case 'days':
@@ -742,16 +756,26 @@ function parse(str) {
       return n * d;
     case 'hours':
     case 'hour':
+    case 'hrs':
+    case 'hr':
     case 'h':
       return n * h;
     case 'minutes':
     case 'minute':
+    case 'mins':
+    case 'min':
     case 'm':
       return n * m;
     case 'seconds':
     case 'second':
+    case 'secs':
+    case 'sec':
     case 's':
       return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
     case 'ms':
       return n;
   }
