@@ -5,7 +5,7 @@ MINSTACHE = node_modules/.bin/minstache
 all: client/build.js client/default.js
 
 client/build.js: client/duo-test.js
-	@$(DUO) --global duotest $< > $@
+	@$(DUO) --stdout --global duotest $< > $@
 
 client/default.js: client/default.html
 	@$(MINSTACHE) < $< > $@
