@@ -1,4 +1,10 @@
 
+0.4.1 / 2015-06-19
+==================
+
+  * test: Find an open port before running tests (#75, @ndhoule)
+  * client: Add `jsonp` callback prefix (#69, @chrissrogers)
+
 0.4.0 / 2015-05-11
 ==================
 
