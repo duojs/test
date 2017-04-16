@@ -45,6 +45,8 @@ program
   .option('-b, --browsers <browsers>', 'browser(s) you want to test on [$BROWSER]', list, [browser])
   .option('-u, --user <user>', 'saucelabs user [$SAUCE_USERNAME]', env.SAUCE_USER || env.SAUCE_USERNAME)
   .option('-k, --key <key>', 'saucelabs key [$SAUCE_ACCESS_KEY]', env.SAUCE_KEY || env.SAUCE_ACCESS_KEY)
+  .option('-n, --number <number>', 'saucelabs build number/version [$SAUCE_BUILD_NUMBER]', env.SAUCE_BUILD_NUMBER || null)
+  .option('-i, --public <level>', 'saucelabs visibility level [$SAUCE_VISIBILITY]', env.SAUCE_VISIBILITY || 'team')
   .action(lazy('./saucelabs'));
 
 /**

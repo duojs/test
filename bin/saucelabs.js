@@ -13,9 +13,10 @@ var env = process.env;
  */
 
 module.exports = function*(cmd, dt){
-  var q = new Queue({ concurrency: 1 });
+  var buildNumber = cmd.number;
   var browsers = cmd.browsers;
   var Reporter = dt.Reporter;
+  var visibility = cmd.public;
   var user = cmd.user;
   var key = cmd.key;
   var failures = 0;
@@ -35,18 +36,29 @@ module.exports = function*(cmd, dt){
 
   // report
   dt.on('browser', function(browser){
+    var client = browser.client();
     var runner = browser.runner;
     var flush = buffer(runner);
 
     function start(){
       console.log();
       console.log('  %s', browser);
+      client.sauceJobUpdate({
+        build: buildNumber,
+        public: visibility
+      }, function (err) {
+        if (err) console.log(err);
+      });
     }
 
     function end(done){
       return function(obj){
         failures += obj.failures;
-        done();
+        client.sauceJobStatus(failures == 0, function(err) {
+          // an error here shouldn't be fatal
+          if (err) console.log(err);
+          done();
+        });
       };
     }
 
